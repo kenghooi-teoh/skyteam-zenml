@@ -2,7 +2,11 @@
 
 **Problem statement**: TODO
 
+## Running mysql docker
 
+```bash
+docker run --rm -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=zenml -d mysql
+```
 
 ## :snake: Python Requirements
 
@@ -116,3 +120,4 @@ Solution: You forgot to install the MLflow integration in your ZenML environment
 ```bash
 zenml integration install mlflow -y
 ```
+
