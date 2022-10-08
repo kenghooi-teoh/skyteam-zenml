@@ -7,7 +7,7 @@ from zenml.steps import step
 from .util import to_date_string
 
 
-# TODO: change to ingestion from postrgres
+# TODO: change to ingestion from mysql
 # 1. DB connector
 # 2. query with filters:
 #       - date
