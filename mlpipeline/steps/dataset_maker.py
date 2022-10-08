@@ -4,7 +4,6 @@
 #  2. for drfit detection
 # performs the following:
 #   1. data validation e.g. schema checks
-#   2. split dataset
 
 class DatasetMaker:
     ...

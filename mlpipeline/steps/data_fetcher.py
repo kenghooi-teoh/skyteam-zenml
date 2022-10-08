@@ -22,26 +22,14 @@ class DataFetcher:
         """Initialize the data ingestion class."""
         pass
 
-    def get_data(self) -> pd.DataFrame:
-        df = pd.read_csv("./data/olist_customers_dataset.csv")
-        return df
 
+    @step
+    def fetch_train_data(self):
+        ...
 
-@step
-def ingest_data() -> pd.DataFrame:
-    """
-    Args:
-        None
-    Returns:
-        df: pd.DataFrame
-    """
-    try:
-        ingest_data = DataFetcher()
-        df = ingest_data.get_data()
-        return df
-    except Exception as e:
-        logging.error(e)
-        raise e
+    @step
+    def fetch_val_data(self):
+        ...
 
 
 def get_customers_by_date_range(start_date, end_date, engine):
