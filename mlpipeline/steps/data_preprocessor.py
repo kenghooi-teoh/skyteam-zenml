@@ -1,10 +1,9 @@
 from typing import Tuple
 
 import pandas as pd
-
+from zenml.steps import step
 
 class DataPreprocessor:
-
     def _merge_data(self, preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Merge preprocessed features after feature engineering
 
@@ -34,6 +33,7 @@ class DataPreprocessor:
         df_y = df_fea_label[df_fea_label.columns[-1]]
         return df_X, df_y
 
+    @step
     def clean_data(self, preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
         """
         Perform data cleaning by merging relevant label and feature based on customer ID
