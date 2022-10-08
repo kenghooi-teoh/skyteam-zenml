@@ -53,3 +53,9 @@ def get_training_data(engine):
     with engine.begin() as connection:
         data = pd.read_sql('select * from customers', con=connection)
         return data
+
+
+def get_labels(engine):
+    with engine.begin() as connection:
+        data = pd.read_sql('select * from labels', con=connection)
+        return data
