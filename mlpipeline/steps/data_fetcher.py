@@ -4,7 +4,10 @@ from datetime import datetime
 import pandas as pd
 from zenml.steps import Output, step
 
-from .util import to_date_string
+from steps.util import to_date_string
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 
 
 # TODO: change to ingestion from mysql
@@ -13,20 +16,20 @@ from .util import to_date_string
 #       - date
 #       - customer id
 
-
 @step
 def fetch_train_data() -> Output(train_feat_df=pd.DataFrame):
-    train_feat_df = pd.read_parquet("./src/data/train_importance_fea.parquet")
+    train_feat_df = pd.read_parquet(BASE_DIR.joinpath("data/train_importance_fea.parquet"))
     return train_feat_df
 
 @step
 def fetch_val_data() -> Output(val_feat_df=pd.DataFrame):
-    val_feat_df = pd.read_parquet('./src/data/valid_importance_fea.parquet')
+    val_feat_df = pd.read_parquet(BASE_DIR.joinpath('data/valid_importance_fea.parquet'))
     return val_feat_df
 
 @step
 def fetch_label_data() -> Output(label_df=pd.DataFrame):
-    label_df = pd.read_csv('./src/data/train_labels.csv')
+    label_df = pd.read_csv(BASE_DIR.joinpath("data/train_labels.csv"))
+    print("import done")
     return label_df
 
 
