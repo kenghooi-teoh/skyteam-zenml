@@ -47,3 +47,9 @@ def get_customers_by_date_range(start_date, end_date, engine):
     with engine.begin() as connection:
         data = pd.read_sql(f'select * from customers c where c.new_date >= "{start_date}" and c.new_date <= "{end_date}"', connection)
         return data
+
+
+def get_training_data(engine):
+    with engine.begin() as connection:
+        data = pd.read_sql('select * from customers', con=connection)
+        return data
