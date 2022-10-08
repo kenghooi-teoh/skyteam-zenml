@@ -47,6 +47,12 @@ class Trainer:
             # log metrics
             mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
 
+            mlflow.xgboost.log_model(
+                sk_model=model,
+                artifact_path="xgboost",
+                registered_model_name="xgboost"
+            )
+
         return model
 
 
