@@ -12,14 +12,6 @@ logger = logging.getLogger("load_data")
 
 engine = create_engine('mysql://root:root@127.0.0.1:3306/zenml', echo=False)
 
-train_df = pd.read_parquet('./data/train_importance_fea.parquet')
-valid_df = pd.read_parquet('./data/valid_importance_fea.parquet')
-other_df = pd.read_parquet('./data/other_importance_fea.parquet')
-
-train_df['S_2'] = pd.to_datetime(train_df['S_2'])
-valid_df['S_2'] = pd.to_datetime(valid_df['S_2'])
-other_df['S_2'] = pd.to_datetime(other_df['S_2'])
-
 def reduce_months(start_date, delta_period):
     end_date = start_date - relativedelta(months=delta_period)
     return end_date
@@ -42,19 +34,23 @@ def create_dummy_customer_data(input_df):
     df_combined = df_combined.drop(['add_year'], axis=1)
 
     return df_combined
-    
 
-other_df = create_dummy_customer_data(other_df)
+def load_to_sql(parquet_data_path, table_name, connection, pre_processing=None):
+    df = pd.read_parquet(parquet_data_path)
+    df['S_2'] = pd.to_datetime(df['S_2'])
+
+    if pre_processing:
+        df = pre_processing(df)
+
+    df.to_sql(table_name, con=connection, if_exists='replace', index=False)
+
 
 with engine.begin() as connection:
     logger.info("ingesting training data")
-    train_df.to_sql('train_data', con=connection, if_exists='replace', index=False)
+    load_to_sql('./data/train_importance_fea.parquet', 'train_data', connection, create_dummy_customer_data)
 
     logger.info("ingesting validation data")
-    valid_df.to_sql('valid_data', con=connection, if_exists='replace', index=False)
+    load_to_sql('./data/valid_importance_fea.parquet', 'valid_data', connection)
 
     logger.info('ingesting dummy customer data')
-    other_df.to_sql('customers', con=connection, if_exists='replace', index=False)
-
-
-
+    load_to_sql('./data/other_importance_fea.parquet', 'customers', connection)
