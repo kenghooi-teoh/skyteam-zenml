@@ -1,10 +1,9 @@
-from typing import Tuple
 
 import pandas as pd
-from zenml.steps import step
+from zenml.steps import Output, step
 
 
-def _merge_data( preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def _merge_data(preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame):
     """Merge preprocessed features after feature engineering
 
     Args:
@@ -20,7 +19,7 @@ def _merge_data( preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.
     return train_fea_label, valid_fea_label
 
 
-def _split_label_feature( df_fea_label: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
+def _split_label_feature( df_fea_label: pd.DataFrame):
     """
     Split dataframe into feature and labels
 
@@ -36,7 +35,9 @@ def _split_label_feature( df_fea_label: pd.DataFrame) -> Tuple[pd.DataFrame, pd.
 
 
 @step
-def clean_data(preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
+def clean_data(
+        preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> \
+        Output(x_train=pd.DataFrame, train_y=pd.Series, x_val=pd.DataFrame, y_val=pd.Series):
     """
     Perform data cleaning by merging relevant label and feature based on customer ID
 
@@ -46,7 +47,6 @@ def clean_data(preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.Da
         label_df (pd.DataFrame): raw label df
 
     Returns:
-            (pd.DataFrame, pd.DataFrame): feature dataframe, label dataframe
     """
     train_fea_label, valid_fea_label = _merge_data(preprocessed_train_df=preprocessed_train_df,
                                                         preprocessed_valid_df=preprocessed_valid_df,

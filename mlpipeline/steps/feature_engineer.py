@@ -1,11 +1,18 @@
 import pandas as pd
-from zenml.steps import step
+from zenml.steps import Output, step
 
 
 @step
-def feature_engineer(df: pd.DataFrame) -> pd.DataFrame:
-    # FEATURE ENGINEERING FROM
-    # https://www.kaggle.com/code/huseyincot/amex-agg-data-how-it-created
+def feature_engineer_train(df: pd.DataFrame) -> Output(train_feat=pd.DataFrame):
+    return feature_engineer(df)
+
+
+@step
+def feature_engineer_val(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+    return feature_engineer(df)
+
+
+def feature_engineer(df: pd.DataFrame):
     all_cols = [c for c in list(df.columns) if c not in ['customer_ID', 'S_2']]
     cat_features = ["B_30", "B_38", "D_114", "D_116", "D_117", "D_120", "D_126", "D_63", "D_64", "D_66", "D_68"]
     num_features = [col for col in all_cols if col not in cat_features]

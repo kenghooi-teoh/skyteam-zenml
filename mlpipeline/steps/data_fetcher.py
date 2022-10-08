@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 import pandas as pd
-from zenml.steps import step
+from zenml.steps import Output, step
 
 from .util import to_date_string
 
@@ -15,17 +15,17 @@ from .util import to_date_string
 
 
 @step
-def fetch_train_data() -> pd.DataFrame:
+def fetch_train_data() -> Output(train_feat_df=pd.DataFrame):
     train_feat_df = pd.read_parquet("./src/data/train_importance_fea.parquet")
     return train_feat_df
 
 @step
-def fetch_val_data() -> pd.DataFrame:
+def fetch_val_data() -> Output(val_feat_df=pd.DataFrame):
     val_feat_df = pd.read_parquet('./src/data/valid_importance_fea.parquet')
     return val_feat_df
 
 @step
-def fetch_label_data() -> pd.DataFrame:
+def fetch_label_data() -> Output(label_df=pd.DataFrame):
     label_df = pd.read_csv('./src/data/train_labels.csv')
     return label_df
 
