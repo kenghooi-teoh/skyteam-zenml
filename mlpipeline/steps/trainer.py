@@ -3,56 +3,53 @@ from zenml.steps import Output, step
 import mlflow
 import xgboost as xgb
 
+import pandas as pd
 from .model_evaluator import ModelEvaluator
 SEED = 123
 
 
-class Trainer:
-    def __init__(self, x_train, x_val, y_val):
-        self.x_train = x_train
-        self.x_val = x_val
-        self.y_val = y_val
 
-    @enable_mlflow
-    @step
-    def train_xgb_model(self) -> Output():
-        """
-        Args:
-        Returns:
-            model: ClassifierMixin
-        """
-        mlflow.xgboost.autolog()
 
-        with mlflow.start_run():
-            xgb_params = {
-                'max_depth': 4,
-                'learning_rate': 0.05,
-                'subsample': 0.8,
-                'colsample_bytree': 0.6,
-                'eval_metric': 'logloss',
-                'objective': 'binary:logistic',
-                'random_state': SEED
-            }
+@enable_mlflow
+@step
+def train_xgb_model(x_train: pd.DataFrame, x_val: pd.DataFrame, y_val: pd.DataFrame) -> Output():
+    """
+    Args:
+    Returns:
+        model: ClassifierMixin
+    """
+    mlflow.xgboost.autolog()
 
-            model = xgb.train(xgb_params,
-                              dtrain=self.x_train,
-                              evals=[(self.x_train, 'train'), (self.x_val, 'valid')],
-                              num_boost_round=9999,
-                              early_stopping_rounds=100,
-                              verbose_eval=100)
+    with mlflow.start_run():
+        xgb_params = {
+            'max_depth': 4,
+            'learning_rate': 0.05,
+            'subsample': 0.8,
+            'colsample_bytree': 0.6,
+            'eval_metric': 'logloss',
+            'objective': 'binary:logistic',
+            'random_state': SEED
+        }
 
-            oof_preds = model.predict(self.x_val)
-            amex_metric_mod_scores = ModelEvaluator.amex_metric_mod(self.y_val.values, oof_preds)
+        model = xgb.train(xgb_params,
+                          dtrain=x_train,
+                          evals=[(x_train, 'train'), (x_val, 'valid')],
+                          num_boost_round=9999,
+                          early_stopping_rounds=100,
+                          verbose_eval=100)
 
-            # log metrics
-            mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
+        oof_preds = model.predict(x_val)
+        amex_metric_mod_scores = ModelEvaluator.amex_metric_mod(y_val.values, oof_preds)
 
-            mlflow.xgboost.log_model(
-                sk_model=model,
-                artifact_path="xgboost",
-                registered_model_name="xgboost"
-            )
+        # log metrics
+        mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
 
-        return model
+        mlflow.xgboost.log_model(
+            sk_model=model,
+            artifact_path="xgboost",
+            registered_model_name="xgboost"
+        )
+
+    return model
 
 

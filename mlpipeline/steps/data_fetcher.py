@@ -13,30 +13,21 @@ from .util import to_date_string
 #       - date
 #       - customer id
 
-class DataFetcher:
-    """
-    Data ingestion class which ingests data from the source and returns a DataFrame.
-    """
 
-    def __init__(self) -> None:
-        """Initialize the data ingestion class."""
-        pass
+@step
+def fetch_train_data() -> pd.DataFrame:
+    train_feat_df = pd.read_parquet("./src/data/train_importance_fea.parquet")
+    return train_feat_df
 
+@step
+def fetch_val_data() -> pd.DataFrame:
+    val_feat_df = pd.read_parquet('./src/data/valid_importance_fea.parquet')
+    return val_feat_df
 
-    @step
-    def fetch_train_data(self) -> pd.DataFrame:
-        train_feat_df = pd.read_parquet("./src/data/train_importance_fea.parquet")
-        return train_feat_df
-
-    @step
-    def fetch_val_data(self):
-        val_feat_df = pd.read_parquet('./src/data/valid_importance_fea.parquet')
-        return val_feat_df
-
-    @step
-    def fetch_label_data(self):
-        label_df = pd.read_csv('./src/data/train_labels.csv')
-        return label_df
+@step
+def fetch_label_data() -> pd.DataFrame:
+    label_df = pd.read_csv('./src/data/train_labels.csv')
+    return label_df
 
 
 def get_customers_by_date_range(start_date, end_date, engine):
