@@ -30,12 +30,11 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
         'random_state': SEED
     }
 
-    model = xgb.train(xgb_params,
-                      dtrain=xgb.DMatrix(x_train.values, y_train.values),
-                      evals=[
-                          (xgb.DMatrix(x_train.values, y_train.values), 'train'),
-                          (xgb.DMatrix(x_val.values, y_val.values), 'valid')]
-                      ,
+    train_dmatrix = xgb.DMatrix(data=x_train, label=y_train)
+    valid_dmatrix = xgb.DMatrix(data=x_val, label=y_val)
+
+    model = xgb.train(xgb_params, dtrain=train_dmatrix,
+                      evals=[(train_dmatrix, 'train'),(valid_dmatrix, 'valid')],
                       num_boost_round=9999,
                       early_stopping_rounds=100,
                       verbose_eval=100)
