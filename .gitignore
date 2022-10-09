@@ -131,3 +131,5 @@ dmypy.json
 # ignore data
 *.parquet
 *.csv
+
+.zen
