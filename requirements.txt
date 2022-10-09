@@ -1,3 +1,2 @@
 streamlit==1.13.0
-xgboost==1.6.2
-zenml==0.20.2
+zenml>=0.20.0

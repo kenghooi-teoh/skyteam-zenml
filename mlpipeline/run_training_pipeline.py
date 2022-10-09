@@ -1,6 +1,6 @@
 from pipelines.training_pipeline import training_pipeline
 from steps.data_fetcher import fetch_train_data, fetch_val_data, fetch_label_data
-from steps.data_preprocessor import clean_data
+from steps.data_preprocessor import training_data_preparation
 from mlpipeline.steps.trainer import train_xgb_model
 from steps.feature_engineer import feature_engineer_train, feature_engineer_val
 
@@ -13,7 +13,7 @@ def run_training_pipeline():
         fetch_label_data=fetch_label_data(),
         feature_engineer_train=feature_engineer_train(),
         feature_engineer_val=feature_engineer_val(),
-        clean_data=clean_data(),
+        training_data_preparation=training_data_preparation(),
         train_xgb_model=train_xgb_model()
     )
     pipe.run()

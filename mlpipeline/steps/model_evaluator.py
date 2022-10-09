@@ -1,5 +1,4 @@
 import numpy as np
-from zenml.integrations.mlflow.mlflow_step_decorator import enable_mlflow
 from zenml.steps import Output, step
 
 
@@ -9,7 +8,6 @@ class ModelEvaluator:
         self.x_val = x_val
         self.y_val = y_val
 
-    @enable_mlflow
     @step
     def evaluation(
         self

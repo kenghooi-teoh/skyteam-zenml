@@ -35,7 +35,7 @@ def _split_label_feature( df_fea_label: pd.DataFrame):
 
 
 @step
-def clean_data(
+def training_data_preparation(
         preprocessed_train_df: pd.DataFrame, preprocessed_valid_df: pd.DataFrame, label_df: pd.DataFrame) -> \
         Output(x_train=pd.DataFrame, train_y=pd.Series, x_val=pd.DataFrame, y_val=pd.Series):
     """

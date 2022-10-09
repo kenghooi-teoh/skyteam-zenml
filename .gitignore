@@ -133,3 +133,7 @@ dmypy.json
 *.csv
 
 .zen
+
+mlruns
+
+.idea

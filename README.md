@@ -2,6 +2,18 @@
 
 **Problem statement**: TODO
 
+## Initialize .zen environment
+
+```bash
+zenml init
+```
+
+## Setup stack
+
+```bash
+bash stack-setup.sh
+```
+
 ## Running mysql docker
 
 ```bash

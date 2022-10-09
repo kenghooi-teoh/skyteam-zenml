@@ -1,11 +1,12 @@
-import logging
 from datetime import datetime
 
 import pandas as pd
 from zenml.steps import Output, step
 
-from steps.util import to_date_string
+
 from pathlib import Path
+
+from mlpipeline.steps.util import to_date_string
 
 BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 
@@ -29,7 +30,6 @@ def fetch_val_data() -> Output(val_feat_df=pd.DataFrame):
 @step
 def fetch_label_data() -> Output(label_df=pd.DataFrame):
     label_df = pd.read_csv(BASE_DIR.joinpath("data/train_labels.csv"))
-    print("import done")
     return label_df
 
 
