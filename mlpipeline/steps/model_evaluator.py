@@ -1,46 +1,13 @@
-import numpy as np
 from zenml.steps import Output, step
+import xgboost as xgb
+import pandas as pd
+
+from mlpipeline.steps.util import amex_metric_mod
 
 
-class ModelEvaluator:
-    def __init__(self, model, x_val, y_val):
-        self.model = model
-        self.x_val = x_val
-        self.y_val = y_val
+@step
+def evaluator(model: xgb.core.Booster, x_val: pd.DataFrame, y_val:pd.Series) -> Output(accuracy=float):
+    valid_dmatrix = xgb.DMatrix(data=x_val, label=y_val)
 
-    @step
-    def evaluation(
-        self
-    ) -> Output:
-        """
-        Args:
-        Returns:
-        """
-        oof_preds = self.model.predict(self.x_val)
-        acc = self.amex_metric_mod(self.y_val.values, oof_preds)
-        return acc
-
-    @staticmethod
-    def amex_metric_mod(y_true, y_pred):
-        labels = np.transpose(np.array([y_true, y_pred]))
-        labels = labels[labels[:, 1].argsort()[::-1]]
-        weights = np.where(labels[:, 0] == 0, 20, 1)
-        cut_vals = labels[np.cumsum(weights) <= int(0.04 * np.sum(weights))]
-        top_four = np.sum(cut_vals[:, 0]) / np.sum(labels[:, 0])
-
-        gini = [0, 0]
-        for i in [1, 0]:
-            labels = np.transpose(np.array([y_true, y_pred]))
-            labels = labels[labels[:, i].argsort()[::-1]]
-            weight = np.where(labels[:, 0] == 0, 20, 1)
-            weight_random = np.cumsum(weight / np.sum(weight))
-            total_pos = np.sum(labels[:, 0] * weight)
-            cum_pos_found = np.cumsum(labels[:, 0] * weight)
-            lorentz = cum_pos_found / total_pos
-            gini[i] = np.sum((lorentz - weight_random) * weight)
-
-        return 0.5 * (gini[1] / gini[0] + top_four)
-
-    def interpret(self):
-        # TODO: return model explanation
-        ...
+    oof_preds = model.predict(valid_dmatrix)
+    return amex_metric_mod(y_val.values, oof_preds)

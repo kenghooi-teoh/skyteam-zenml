@@ -3,12 +3,14 @@ import mlflow
 import xgboost as xgb
 
 import pandas as pd
-from .model_evaluator import ModelEvaluator
+
+from mlpipeline.steps.util import amex_metric_mod
+
 SEED = 123
 
 
 @step
-def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFrame, y_val: pd.Series) -> Output():
+def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFrame, y_val: pd.Series) -> Output(model=xgb.core.Booster):
     """
     Args:
     Returns:
@@ -32,7 +34,7 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
                       verbose_eval=100)
 
     oof_preds = model.predict(valid_dmatrix)
-    amex_metric_mod_scores = ModelEvaluator.amex_metric_mod(y_val.values, oof_preds)
+    amex_metric_mod_scores = amex_metric_mod(y_val.values, oof_preds)
 
     # log metrics
     mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
