@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 from zenml.steps import Output, step
 
-
+from sqlalchemy import create_engine
 from pathlib import Path
 
 from mlpipeline.steps.util import to_date_string
@@ -17,20 +17,25 @@ BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 #       - date
 #       - customer id
 
+ENGINE = create_engine('mysql://root:root@127.0.0.1:3306/zenml', echo=False)
+
 @step
 def fetch_train_data() -> Output(train_feat_df=pd.DataFrame):
-    train_feat_df = pd.read_parquet(BASE_DIR.joinpath("data/train_importance_fea.parquet"))
-    return train_feat_df
+    with ENGINE.begin() as connection:
+        data = pd.read_sql('select * from train_data', con=connection)
+        return data
 
 @step
 def fetch_val_data() -> Output(val_feat_df=pd.DataFrame):
-    val_feat_df = pd.read_parquet(BASE_DIR.joinpath('data/valid_importance_fea.parquet'))
-    return val_feat_df
+    with ENGINE.begin() as connection:
+        data = pd.read_sql('select * from valid_data', con=connection)
+        return data
 
 @step
 def fetch_label_data() -> Output(label_df=pd.DataFrame):
-    label_df = pd.read_csv(BASE_DIR.joinpath("data/train_labels.csv"))
-    return label_df
+    with ENGINE.begin() as connection:
+        data = pd.read_sql('select * from labels', con=connection)
+        return data
 
 
 def get_customers_by_date_range(start_date, end_date, engine):
@@ -43,13 +48,19 @@ def get_customers_by_date_range(start_date, end_date, engine):
         return data
 
 
-def get_training_data(engine):
-    with engine.begin() as connection:
-        data = pd.read_sql('select * from customers', con=connection)
-        return data
-
-
-def get_labels(engine):
-    with engine.begin() as connection:
-        data = pd.read_sql('select * from labels', con=connection)
-        return data
+# def get_training_data(engine):
+#     with engine.begin() as connection:
+#         data = pd.read_sql('select * from train_data', con=connection)
+#         return data
+#
+#
+# def get_val_data(engine):
+#     with engine.begin() as connection:
+#         data = pd.read_sql('select * from valid_data', con=connection)
+#         return data
+#
+#
+# def get_labels(engine):
+#     with engine.begin() as connection:
+#         data = pd.read_sql('select * from labels', con=connection)
+#         return data
