@@ -3,29 +3,18 @@
 # - .predict()
 # - post processing, model explanation if needed
 # - save prediction results for model monitoring (using model_evaluator)
+from xgboost import DMatrix, Booster
+
 
 # - write new input to DB
-from zenml.steps import Output, step
-import mlflow.pyfunc
+from zenml.steps import Output, step, BaseParameters
 
 
-class Predictor:
-    def __init__(self):
-        self.model = self.load_model()
+class PredictorConfig(BaseParameters):
+    model: Booster
+    input_features: DMatrix
+    
 
-    def load_model(self):
-        model_name = "xgboost"
-        model_version = 1
-
-        model = mlflow.pyfunc.load_model(
-            model_uri=f"models:/{model_name}/{model_version}"
-        )
-
-        return model
-
-    @step
-    def predict(self, x_in):
-        return self.model.predict(x_in)
-
-    def save_prediction(self):
-        ...
+@step
+def predictor(config: PredictorConfig):
+    return config.model.predict(config.input_features)

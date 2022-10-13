@@ -2,7 +2,7 @@ from zenml.pipelines import pipeline
 
 
 @pipeline(enable_cache=False)
-def inference_pipeline(
+def batch_inference_pipeline(
         inference_data_fetcher,
         feature_engineer,
         predictor,
@@ -14,4 +14,6 @@ def inference_pipeline(
 
     Returns:
     """
-    ...
+    data = inference_data_fetcher()
+    features = feature_engineer(data)
+    prediction = predictor(features)

@@ -4,7 +4,7 @@ from zenml.steps import Output, step, BaseParameters
 
 from pathlib import Path
 
-from mlpipeline.steps.util import to_date_string, engine
+from mlpipeline.steps.util import to_date_string, ENGINE
 
 BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 
@@ -13,20 +13,30 @@ class FetchDataConfig(BaseParameters):
     start_date: str = None
     end_date: str = None
 
+
+class SingleCustomerQueryConfig(BaseParameters):
+    customer_id: str
+
+
 # TODO:
 # 1. add customer query by customer id (for single inference)
 @step
-def print_dataframe_info(train_df:pd.DataFrame, val_df:pd.DataFrame) -> None:
+def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig):
+    return get_customer_data_by_id(ENGINE, config.customer_id)
+
+
+@step
+def print_dataframe_info(train_df: pd.DataFrame, val_df: pd.DataFrame) -> None:
     print(train_df.shape, val_df.shape)
 
 @step
 def fetch_train_data(config: FetchDataConfig) -> Output(train_feat_df=pd.DataFrame):
     if config.start_date is None or config.end_date is None:
-        train_df = get_training_data(engine)
+        train_df = get_training_data(ENGINE)
     else:
-        train_df = get_training_data(engine)
+        train_df = get_training_data(ENGINE)
         train_df_reduced = select_training_data_by_ratio(train_df)
-        new_train_df = get_customers_by_date_range(config.start_date, config.end_date, engine)
+        new_train_df = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
 
         train_df = pd.concat([train_df_reduced, new_train_df], ignore_index=True)
     return train_df
@@ -34,14 +44,14 @@ def fetch_train_data(config: FetchDataConfig) -> Output(train_feat_df=pd.DataFra
 @step
 def fetch_val_data(config: FetchDataConfig) -> Output(val_feat_df=pd.DataFrame):
     if config.start_date is None or config.end_date is None:
-        val_df = get_val_data(engine)
+        val_df = get_val_data(ENGINE)
     else:
-        val_df = get_customers_by_date_range(config.start_date, config.end_date, engine)
+        val_df = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
     return val_df
 
 @step
 def fetch_label_data() -> Output(label_df=pd.DataFrame):
-    label_df = get_labels(engine)
+    label_df = get_labels(ENGINE)
     return label_df
 
 
@@ -81,6 +91,12 @@ def get_val_data(engine):
 def get_customers_data(engine):
     with engine.begin() as connection:
         data = pd.read_sql('select * from customers', con=connection)
+        return data
+
+
+def get_customer_data_by_id(engine, id):
+    with engine.begin() as connection:
+        data = pd.read_sql('select * from customers where id=id', con=connection)
         return data
 
 

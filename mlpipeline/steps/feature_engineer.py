@@ -12,6 +12,16 @@ def feature_engineer_val(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
     return feature_engineer(df)
 
 
+@step
+def feature_engineer_inference_batch(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+    return feature_engineer(df)
+
+
+@step
+def feature_engineer_inference_ondemand(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+    return feature_engineer(df)
+
+
 def feature_engineer(df: pd.DataFrame):
     all_cols = [c for c in list(df.columns) if c not in ['customer_ID', 'S_2']]
     cat_features = ["B_30", "B_38", "D_114", "D_116", "D_117", "D_120", "D_126", "D_63", "D_64", "D_66", "D_68"]

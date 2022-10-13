@@ -2,10 +2,12 @@ from datetime import datetime
 import numpy as np
 from sqlalchemy import create_engine
 
-engine = create_engine('mysql://root:root@127.0.0.1:3306/zenml', echo=False)
+ENGINE = create_engine('mysql://root:root@127.0.0.1:3306/zenml', echo=False)
+
 
 def to_date_string(dt: datetime):
     return dt.strftime("%Y-%m-%d")
+
 
 def amex_metric_mod(y_true, y_pred):
     labels = np.transpose(np.array([y_true, y_pred]))

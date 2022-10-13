@@ -1,30 +1,19 @@
-from pipelines.batch_inference_pipeline import inference_pipeline
-from steps.data_fetcher import fetch_train_data, fetch_val_data, fetch_label_data
-from steps.data_preprocessor import training_data_preparation
-from mlpipeline.steps.trainer import train_xgb_model
-from steps.feature_engineer import feature_engineer_train, feature_engineer_val
-from steps.model_evaluator import evaluator
-from steps.deployment_trigger import deployment_trigger
-
-from zenml.integrations.mlflow.steps import mlflow_model_deployer_step
+from pipelines.batch_inference_pipeline import batch_inference_pipeline
+from steps.data_fetcher import fetch_ondemand_inference_data
+from steps.feature_engineer import feature_engineer_inference_batch
+from steps.predictor import predictor
 
 
-def run_inference_pipeline():
+def run_batch_inference_pipeline():
     print("running pipeline")
-    pipe = inference_pipeline(
-        fetch_train_data=fetch_train_data(),
-        fetch_val_data=fetch_val_data(),
-        fetch_label_data=fetch_label_data(),
-        feature_engineer_train=feature_engineer_train(),
-        feature_engineer_val=feature_engineer_val(),
-        training_data_preparation=training_data_preparation(),
-        train_xgb_model=train_xgb_model(),
-        evaluate_model=evaluator(),
-        deployment_trigger=deployment_trigger(),
-        model_deployer=mlflow_model_deployer_step()
+
+    pipe = batch_inference_pipeline(
+        inference_data_fetcher=fetch_ondemand_inference_data(),
+        feature_enginee=feature_engineer_inference_batch(),
+        predictor=predictor()
     )
     pipe.run()
 
 
 if __name__ == "__main__":
-    run_inference_pipeline()
+    run_batch_inference_pipeline()
