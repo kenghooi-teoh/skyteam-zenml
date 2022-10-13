@@ -53,13 +53,13 @@ def load_csv_to_sql(csv_data_path, table_name, con, pre_processing=None):
 
 with engine.begin() as connection:
     logger.info("ingesting training data")
-    load_parquet_to_sql('./data/train_importance_fea.parquet', 'train_data', connection, create_dummy_customer_data)
+    load_parquet_to_sql('./data/train_importance_fea.parquet', 'train_data', connection)
 
     logger.info("ingesting validation data")
     load_parquet_to_sql('./data/valid_importance_fea.parquet', 'valid_data', connection)
 
     logger.info('ingesting dummy customer data')
-    load_parquet_to_sql('./data/other_importance_fea.parquet', 'customers', connection)
+    load_parquet_to_sql('./data/other_importance_fea.parquet', 'customers', connection, create_dummy_customer_data)
 
     logger.info('ingesting dummy label data')
     load_csv_to_sql('./data/train_labels.csv', 'labels', connection)
