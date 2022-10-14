@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 
 logger = logging.getLogger("load_data")
 
-engine = create_engine('mysql://root:root@127.0.0.1:3306/zenml', echo=False)
+engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
 
 def reduce_months(start_date, delta_period):
     end_date = start_date - relativedelta(months=delta_period)
