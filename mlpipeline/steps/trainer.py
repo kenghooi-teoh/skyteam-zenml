@@ -9,7 +9,7 @@ from mlpipeline.steps.util import amex_metric_mod
 SEED = 123
 
 
-@step
+@step(experiment_tracker="mlflow_tracker")
 def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFrame, y_val: pd.Series) -> Output(model=xgb.core.Booster):
     """
     Args:
@@ -17,7 +17,7 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
         model: ClassifierMixin
     """
     # autologging does not work because of No module named 'matplotlib'
-    # mlflow.xgboost.autolog()
+    mlflow.xgboost.autolog()
 
     xgb_params = {
         'learning_rate': 0.05,

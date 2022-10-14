@@ -21,7 +21,7 @@ class SingleCustomerQueryConfig(BaseParameters):
 # TODO:
 # 1. add customer query by customer id (for single inference)
 @step
-def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig):
+def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig) -> Output(data=pd.DataFrame):
     return get_customer_data_by_id(ENGINE, config.customer_id)
 
 

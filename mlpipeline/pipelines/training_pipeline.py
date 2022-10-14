@@ -16,28 +16,19 @@ def training_pipeline(
         deployment_trigger,
         model_deployer
 ):
-    """
-    Args:
-
-    Returns:s
-    """
-
     train_df = fetch_train_data()
     val_df = fetch_val_data()
     label = fetch_label_data()
-    print("data loaded")
 
     train_feat = feature_engineer_train(train_df)
     val_feat = feature_engineer_val(val_df)
 
     x_train, y_train, x_val, y_val = training_data_preparation(train_feat, val_feat, label)
-    print("data preprocessed")
 
     model = train_xgb_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
-    print("model trained")
 
     accuracy = evaluate_model(model, x_val, y_val)
 
     deployment_decision = deployment_trigger(accuracy)
 
-    # model_deployer(deployment_decision, model)
+    model_deployer(deployment_decision, model)
