@@ -14,6 +14,7 @@ def feature_engineer_val(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
 
 @step
 def feature_engineer_inference_batch(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+    print("Feature engineering data...")
     return feature_engineer(df)
 
 

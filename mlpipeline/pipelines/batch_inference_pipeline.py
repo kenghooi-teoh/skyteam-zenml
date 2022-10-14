@@ -5,7 +5,8 @@ from zenml.pipelines import pipeline
 def batch_inference_pipeline(
         inference_data_fetcher,
         feature_engineer,
-        predictor,
+        prediction_service_loader,
+        predictor
         # post_processor,
         # prediction_storer
 ):
@@ -16,4 +17,5 @@ def batch_inference_pipeline(
     """
     data = inference_data_fetcher()
     features = feature_engineer(data)
-    prediction = predictor(features)
+    prediction_service = prediction_service_loader()
+    predictor = predictor(service=prediction_service, data=features)

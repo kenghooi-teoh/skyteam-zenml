@@ -27,6 +27,16 @@ def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig) -> Output(d
 
 
 @step
+def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFrame):
+    print("Getting batch inference data...")
+    if config.start_date is None or config.end_date is None:
+        data = get_val_data(ENGINE) # TODO: using get_val_data for now
+    else:
+        data = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
+    return data
+
+
+@step
 def print_dataframe_info(train_df: pd.DataFrame, val_df: pd.DataFrame) -> None:
     print(train_df.shape, val_df.shape)
 

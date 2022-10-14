@@ -3,18 +3,20 @@
 # - .predict()
 # - post processing, model explanation if needed
 # - save prediction results for model monitoring (using model_evaluator)
-from xgboost import DMatrix, Booster
 
+import pandas as pd
+from zenml.integrations.mlflow.services import MLFlowDeploymentService
+from zenml.steps import Output, step
 
-# - write new input to DB
-from zenml.steps import Output, step, BaseParameters
-
-
-class PredictorConfig(BaseParameters):
-    model: Booster
-    input_features: DMatrix
-    
 
 @step
-def predictor(config: PredictorConfig):
-    return config.model.predict(config.input_features)
+def predictor(
+    service: MLFlowDeploymentService,
+    data: pd.DataFrame,
+) -> Output():
+    """Run a inference request against a prediction service"""
+
+    service.start(timeout=10)
+    prediction = service.predict(data.values)  # TODO: make this step predict DMatrix (xbgoost)
+    print(f"prediction: {prediction}")
+    return prediction
