@@ -3,8 +3,8 @@ from datetime import datetime
 from pipelines.batch_inference_pipeline import batch_inference_pipeline
 from steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
 from steps.feature_engineer import feature_engineer_inference_batch
-from steps.predictor import predictor
 from steps.prediction_service_loader import prediction_service_loader, PredictionServiceLoaderStepConfig
+from steps.predictor import predictor
 
 
 def run_batch_inference_pipeline():
@@ -17,9 +17,11 @@ def run_batch_inference_pipeline():
         end_date=str(val_end_date.date())
     )
 
-    predictor_service_config = PredictionServiceLoaderStepConfig(pipeline_name="training_pipeline",
-                                                         step_name="model_deployer",
-                                                         model_name="xgboost")
+    predictor_service_config = PredictionServiceLoaderStepConfig(
+        pipeline_name="training_pipeline",
+        step_name="model_deployer",
+        model_name="xgboost"
+    )
 
     pipe = batch_inference_pipeline(
         inference_data_fetcher=fetch_batch_inference_data(config=fetch_val_data_config),

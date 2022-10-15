@@ -33,6 +33,7 @@ def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFr
         data = get_val_data(ENGINE) # TODO: using get_val_data for now
     else:
         data = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
+    print("Inference data loaded: ", data.shape)
     return data
 
 

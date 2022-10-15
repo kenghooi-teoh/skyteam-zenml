@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from zenml.steps import Output, step
 
@@ -24,6 +25,8 @@ def feature_engineer_inference_ondemand(df: pd.DataFrame) -> Output(val_feat=pd.
 
 
 def feature_engineer(df: pd.DataFrame):
+    print("null values in data (before feat engineering): ", df.isna().sum().sum())
+    print("inf values in data (before feat engineering): ", df.isin([np.inf, -np.inf]).sum().sum())
     all_cols = [c for c in list(df.columns) if c not in ['customer_ID', 'S_2']]
     cat_features = ["B_30", "B_38", "D_114", "D_116", "D_117", "D_120", "D_126", "D_63", "D_64", "D_66", "D_68"]
     num_features = [col for col in all_cols if col not in cat_features]
@@ -40,5 +43,6 @@ def feature_engineer(df: pd.DataFrame):
     df = pd.concat([test_num_agg, test_cat_agg], axis=1)
     del test_num_agg, test_cat_agg
     print('shape after engineering', df.shape)
-
+    print("null values in features (after feat engineering): ", df.isna().sum().sum())
+    print("inf values in features (after feat engineering): ", df.isin([np.inf, -np.inf]).sum().sum())
     return df

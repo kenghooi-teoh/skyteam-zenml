@@ -27,7 +27,8 @@ def run_training_pipeline():
         train_xgb_model=train_xgb_model(),
         evaluate_model=evaluator(),
         deployment_trigger=deployment_trigger(),
-        model_deployer=mlflow_model_deployer_step(params=deployer_params)
+        # model_deployer=mlflow_model_deployer_step(params=deployer_params)
+        model_deployer=mlflow_model_deployer_step()
     )
     pipe.run()
 

@@ -31,4 +31,4 @@ def training_pipeline(
 
     deployment_decision = deployment_trigger(accuracy)
 
-    model_deployer(deployment_decision, model)
+    service = model_deployer(deployment_decision, model)
