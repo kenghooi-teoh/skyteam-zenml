@@ -28,3 +28,7 @@ def amex_metric_mod(y_true, y_pred):
         gini[i] = np.sum((lorentz - weight_random) * weight)
 
     return 0.5 * (gini[1] / gini[0] + top_four)
+
+
+def raw_pred_to_class(pred: float):
+    return int(pred >= 0.5)
