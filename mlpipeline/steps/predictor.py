@@ -21,9 +21,10 @@ def predictor(
     service.start(timeout=10)
     data = data.fillna(0)  # TODO check feature engineer code first, remove this once fixed
 
-    # https://github.com/zenml-io/zenfiles/blob/main/customer-satisfaction/pipelines/deployment_pipeline.py#L101
-    json_list = json.loads(json.dumps(list(data.T.to_dict().values())))
-    request_input = np.array(json_list)
+    request_input = np.array(data.to_dict(orient='records'))
 
     prediction = service.predict(request_input)
+    print("prediction: ", prediction)
     return prediction
+
+
