@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from zenml.integrations.mlflow.services import MLFlowDeploymentService
 from zenml.steps import Output, step
-import json
+from mlpipeline.steps.util import raw_pred_to_class
 
 
 @step
@@ -24,7 +24,8 @@ def predictor(
     request_input = np.array(data.to_dict(orient='records'))
 
     prediction = service.predict(request_input)
-    print("prediction: ", prediction)
-    return prediction
+    predicted_class = map(raw_pred_to_class, prediction)
+    print("predicted_class: ", list(predicted_class))
+    return np.array(predicted_class)
 
 
