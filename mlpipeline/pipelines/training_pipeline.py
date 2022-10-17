@@ -5,6 +5,7 @@ from zenml.pipelines import pipeline
 # - eventually write model to model registry with evaluation scores
 @pipeline(enable_cache=False)
 def training_pipeline(
+        training_config,
         fetch_train_data,
         fetch_val_data,
         fetch_label_data,
@@ -13,9 +14,10 @@ def training_pipeline(
         training_data_preparation,
         train_xgb_model,
         evaluate_model,
-        deployment_trigger,
         model_deployer
 ):
+    is_retraining = training_config()
+
     train_df = fetch_train_data()
     val_df = fetch_val_data()
     label = fetch_label_data()
@@ -27,8 +29,6 @@ def training_pipeline(
 
     model = train_xgb_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
-    accuracy = evaluate_model(model, x_val, y_val)
-
-    deployment_decision = deployment_trigger(accuracy)
+    accuracy, deployment_decision = evaluate_model(model, x_val, y_val, is_retraining)
 
     model_deployer(deployment_decision, model)
