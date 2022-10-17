@@ -14,7 +14,7 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
     """
     Args:
     Returns:
-        model: ClassifierMixin
+        model:
     """
     # autologging does not work because of No module named 'matplotlib'
     mlflow.xgboost.autolog()
@@ -30,7 +30,7 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
     valid_dmatrix = xgb.DMatrix(data=x_val, label=y_val)
 
     model = xgb.train(xgb_params, dtrain=train_dmatrix,
-                      evals=[(train_dmatrix, 'train'),(valid_dmatrix, 'valid')],
+                      evals=[(train_dmatrix, 'train'), (valid_dmatrix, 'valid')],
                       verbose_eval=100)
 
     oof_preds = model.predict(valid_dmatrix)
@@ -38,13 +38,6 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
 
     # log metrics
     mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
-
-    # MlflowException: Model Registry features are not supported by the store with URI
-    # mlflow.xgboost.log_model(
-    #     xgb_model=model,
-    #     artifact_path="xgboost",
-    #     registered_model_name="xgboost"
-    # )
 
     return model
 
