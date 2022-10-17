@@ -26,6 +26,6 @@ def predictor(
     prediction = service.predict(request_input)
     predicted_class = map(raw_pred_to_class, prediction)
     print("predicted_class: ", list(predicted_class))
-    return np.array(predicted_class)
+    return np.array(predicted_class)  # TODO <- [{class:1, inference_date:xxx, cust_id: xxx}]
 
 

@@ -32,3 +32,7 @@ def amex_metric_mod(y_true, y_pred):
 
 def raw_pred_to_class(pred: float):
     return int(pred >= 0.5)
+
+
+def save_prediction_in_db():
+    ...

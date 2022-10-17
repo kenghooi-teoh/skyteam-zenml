@@ -4,6 +4,7 @@ from pipelines.batch_inference_pipeline import batch_inference_pipeline
 from steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
 from steps.feature_engineer import feature_engineer_inference_batch
 from steps.prediction_service_loader import prediction_service_loader, PredictionServiceLoaderStepConfig
+from steps.prediction_storer import prediction_storer, StorePredictionConfig
 from steps.predictor import predictor
 
 
