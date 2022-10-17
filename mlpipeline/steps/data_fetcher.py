@@ -20,9 +20,21 @@ class SingleCustomerQueryConfig(BaseParameters):
 
 # TODO:
 # 1. add customer query by customer id (for single inference)
+# 2. logics to fetch batch inference data
 @step
 def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig) -> Output(data=pd.DataFrame):
     return get_customer_data_by_id(ENGINE, config.customer_id)
+
+
+@step
+def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFrame):
+    print("Getting batch inference data...")
+    if config.start_date is None or config.end_date is None:
+        data = get_val_data(ENGINE) # TODO: using get_val_data for now
+    else:
+        data = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
+    print("Inference data loaded: ", data.shape)
+    return data
 
 
 @step
