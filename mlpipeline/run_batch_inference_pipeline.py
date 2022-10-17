@@ -4,7 +4,7 @@ from pipelines.batch_inference_pipeline import batch_inference_pipeline
 from steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
 from steps.feature_engineer import feature_engineer_inference_batch
 from steps.prediction_service_loader import prediction_service_loader, PredictionServiceLoaderStepConfig
-from steps.prediction_storer import prediction_storer, StorePredictionConfig
+# from steps.prediction_storer import prediction_storer, StorePredictionConfig
 from steps.predictor import predictor
 
 
@@ -28,7 +28,8 @@ def run_batch_inference_pipeline():
         inference_data_fetcher=fetch_batch_inference_data(config=fetch_val_data_config),
         feature_engineer=feature_engineer_inference_batch(),
         prediction_service_loader=prediction_service_loader(config=predictor_service_config),
-        predictor=predictor()
+        predictor=predictor(),
+        # prediction_storer=prediction_storer()
     )
     pipe.run()
 

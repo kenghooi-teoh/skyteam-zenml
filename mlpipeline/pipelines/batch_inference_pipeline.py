@@ -9,7 +9,7 @@ def batch_inference_pipeline(
         feature_engineer,
         prediction_service_loader,
         predictor,
-        prediction_storer
+        # prediction_storer
         # post_processor,
 ):
     """
@@ -21,4 +21,4 @@ def batch_inference_pipeline(
     features = feature_engineer(data)
     prediction_service = prediction_service_loader()
     prediction = predictor(service=prediction_service, data=features)
-    stored_prediction = prediction_storer(prediction=prediction)
+    # stored_prediction = prediction_storer(prediction=prediction)
