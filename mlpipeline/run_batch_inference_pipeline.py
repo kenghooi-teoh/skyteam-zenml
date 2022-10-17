@@ -4,7 +4,7 @@ from pipelines.batch_inference_pipeline import batch_inference_pipeline
 from steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
 from steps.feature_engineer import feature_engineer_inference_batch
 from steps.prediction_service_loader import prediction_service_loader, PredictionServiceLoaderStepConfig
-# from steps.prediction_storer import prediction_storer, StorePredictionConfig
+from steps.prediction_storer import prediction_storer, DataDateFilterConfig
 from steps.predictor import predictor
 
 
@@ -14,6 +14,11 @@ def run_batch_inference_pipeline():
     val_end_date = datetime(2022, 7, 31)
 
     fetch_val_data_config = FetchDataConfig(
+        start_date=str(val_start_date.date()),
+        end_date=str(val_end_date.date())
+    )
+
+    data_date_filter_config = DataDateFilterConfig(
         start_date=str(val_start_date.date()),
         end_date=str(val_end_date.date())
     )
@@ -29,7 +34,7 @@ def run_batch_inference_pipeline():
         feature_engineer=feature_engineer_inference_batch(),
         prediction_service_loader=prediction_service_loader(config=predictor_service_config),
         predictor=predictor(),
-        # prediction_storer=prediction_storer()
+        prediction_storer=prediction_storer(data_date_filter_config=data_date_filter_config)
     )
     pipe.run()
 

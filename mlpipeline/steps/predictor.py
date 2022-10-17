@@ -11,11 +11,12 @@ from zenml.steps import Output, step
 from mlpipeline.steps.util import raw_pred_to_class
 
 
+
 @step
 def predictor(
     service: MLFlowDeploymentService,
-    data: pd.DataFrame,
-) -> Output():
+    data: pd.DataFrame
+) -> Output(predicted_cust_array=np.ndarray):
     """Run a inference request against a prediction service"""
 
     service.start(timeout=10)
@@ -34,7 +35,9 @@ def predictor(
 
     predicted_cust_list = [{"class": cls, "cust_id": cus} for cls, cus in zip(predicted_class_list, cust_id_list)]
     print("final output: ", predicted_cust_list[:10])
-    return np.array(predicted_cust_list)
+
+    predicted_cust_array = np.array(predicted_cust_list)
+    return predicted_cust_array
     # return np.array(predicted_class)  # TODO <- [{class:1, inference_date:xxx, cust_id: xxx}]
 
 

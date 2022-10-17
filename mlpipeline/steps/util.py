@@ -2,6 +2,7 @@ from datetime import datetime
 import numpy as np
 from sqlalchemy import create_engine
 from typing import Union
+import pandas as pd
 
 ENGINE = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
 
@@ -40,5 +41,15 @@ def raw_pred_to_class(pred: Union[np.array, list]):
     return list(map(lambda x: int(x >= 0.5), pred))
 
 
-def save_prediction_in_db():
+def save_prediction_in_db(data: pd.DataFrame):  # TODO
     ...
+
+
+def run_id_to_datetime(run_id):
+    """
+    'batch_inference_pipeline-17_Oct_22-23_57_48_920449' --> datetime.datetime(2022, 10, 17, 23, 57, 48, 920449)
+    :param run_id:
+    :return:
+    """
+    run_id = run_id.replace("batch_inference_pipeline-", "")
+    return datetime.strptime(run_id, '%d_%b_%y-%H_%M_%S_%f')

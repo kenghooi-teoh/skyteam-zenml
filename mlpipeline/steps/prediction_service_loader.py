@@ -5,6 +5,9 @@ from zenml.integrations.mlflow.services import MLFlowDeploymentService
 from zenml.steps import step, BaseParameters
 
 
+from zenml.client import Client
+
+
 class PredictionServiceLoaderStepConfig(BaseParameters):
     """Model deployment service loader configuration
     Attributes:
@@ -48,3 +51,4 @@ def prediction_service_loader(
         )
 
     return service
+

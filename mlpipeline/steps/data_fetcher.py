@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 
 
 class FetchDataConfig(BaseParameters):
-    start_date: str = None
-    end_date: str = None
+    start_date: str
+    end_date: str
 
 
 class SingleCustomerQueryConfig(BaseParameters):
@@ -30,10 +30,13 @@ def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig) -> Output(d
 def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFrame):
     print("Getting batch inference data...")
     if config.start_date is None or config.end_date is None:
-        data = get_val_data(ENGINE) # TODO: using get_val_data for now
+        data = get_val_data(ENGINE)  # TODO: using get_val_data for now
     else:
         data = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
     print("Inference data loaded: ", data.shape)
+    metadata = {"filter_start_date": config.start_date, "filter_end_date": config.end_date}
+    print("inference metadata: ", metadata)
+
     return data
 
 
