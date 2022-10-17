@@ -9,7 +9,7 @@ from zenml.steps import step, StepEnvironment, STEP_ENVIRONMENT_NAME, Output
 from zenml.environment import Environment
 from typing import cast
 
-from mlpipeline.steps.util import amex_metric_mod
+from mlpipeline.steps.util import amex_metric_mod, raw_pred_to_class
 
 
 @step
@@ -42,7 +42,11 @@ def evaluator(model: xgb.core.Booster, x_val: pd.DataFrame, y_val:pd.Series, is_
 
         request_input = np.array(x_val.to_dict(orient='records'))
 
-        prediction = service.predict(request_input)
+        predictions = service.predict(request_input)
+
+        predicted_class = map(raw_pred_to_class, predictions)
+        print("predicted_class: ", type(predicted_class))
+        # np.array(predicted_class)
 
         return 0.6, True
 
