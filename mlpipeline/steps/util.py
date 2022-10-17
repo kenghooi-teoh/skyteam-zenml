@@ -34,11 +34,10 @@ def amex_metric_mod(y_true, y_pred):
 def raw_pred_to_class(pred: Union[np.array, list]):
     """
     list of raw pred to int class
-    :param pred:
-    :return:
+    :param pred: list or np.array
+    :return: list
     """
-    return map(lambda x: int(x >= 0.5), pred)
-
+    return list(map(lambda x: int(x >= 0.5), pred))
 
 
 def save_prediction_in_db():

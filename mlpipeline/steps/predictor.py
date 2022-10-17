@@ -26,8 +26,7 @@ def predictor(
 
     prediction = service.predict(request_input)
     print("raw prediction: ", prediction[:10])
-    predicted_class_gen = raw_pred_to_class(prediction)
-    predicted_class_list = list(predicted_class_gen)
+    predicted_class_list = raw_pred_to_class(prediction)
 
     print("predicted_class: ", list(predicted_class_list)[:10])
 
