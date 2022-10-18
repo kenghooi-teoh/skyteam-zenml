@@ -1,19 +1,17 @@
-from datetime import datetime
-
 import numpy as np
-
 import pandas as pd
-from mlpipeline.steps.util import run_id_to_datetime, save_prediction_in_db
-
-
+from sqlalchemy import create_engine
 from zenml.environment import Environment
 from zenml.steps import (
     Output, step,
     STEP_ENVIRONMENT_NAME,
     StepEnvironment,
-BaseParameters
+    BaseParameters
 )
 from typing import cast
+from mlpipeline.steps.util import run_id_to_datetime, load_df_to_sql
+
+engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
 
 
 class DataDateFilterConfig(BaseParameters):
@@ -36,13 +34,9 @@ def prediction_storer(
         # [x] input start date, input end date
     """
     step_env = cast(StepEnvironment, Environment()[STEP_ENVIRONMENT_NAME])
-    pipeline_name = step_env.pipeline_name
+    # pipeline_name = step_env.pipeline_name
+    # step_name = step_env.step_name
     run_id = step_env.pipeline_run_id
-    step_name = step_env.step_name
-
-    # print("pipeline_name", pipeline_name)
-    # print("run_id", run_id)
-    # print("step_name", step_name)
 
     print(data_date_filter_config.start_date, " - ", data_date_filter_config.end_date)
     print(predicted_cust_array)
@@ -50,7 +44,7 @@ def prediction_storer(
     inference_date = run_id_to_datetime(run_id)
     print(inference_date)
 
-    df = pd.DataFrame(predicted_cust_array)
+    df = pd.DataFrame(list(predicted_cust_array))
     df["run_id"] = run_id
     df["inference_date"] = inference_date
     df["data_start_date"] = data_date_filter_config.start_date
@@ -59,7 +53,9 @@ def prediction_storer(
     print(f"final output to write to DB: \n {df.shape}")
     print(df.head())
 
-    save_prediction_in_db(df)
+    with engine.begin() as connection:
+        print("saving prediction and metadata")
+        load_df_to_sql(df, 'prediction', connection)
 
     return df
 

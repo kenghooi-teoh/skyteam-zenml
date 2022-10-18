@@ -38,7 +38,6 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
 
     # log metrics
     mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
-    mlflow.log_artifact
 
     return model
 

@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).parent.parent.parent.absolute()
 
 
 class FetchDataConfig(BaseParameters):
-    start_date: str
-    end_date: str
+    start_date: str = None
+    end_date: str = None
 
 
 class SingleCustomerQueryConfig(BaseParameters):

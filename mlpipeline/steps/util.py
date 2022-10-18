@@ -41,8 +41,8 @@ def raw_pred_to_class(pred: Union[np.array, list]):
     return list(map(lambda x: int(x >= 0.5), pred))
 
 
-def save_prediction_in_db(data: pd.DataFrame):  # TODO
-    ...
+def load_df_to_sql(data: pd.DataFrame, table_name, connection):  # TODO
+    data.to_sql(table_name, con=connection, if_exists='replace', index=False)
 
 
 def run_id_to_datetime(run_id):
