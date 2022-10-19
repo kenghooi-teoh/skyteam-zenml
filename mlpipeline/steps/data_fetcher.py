@@ -76,7 +76,13 @@ def get_customers_by_date_range(start_date, end_date, engine):
     if isinstance(end_date, datetime):
         end_date = to_date_string(end_date)
     with engine.begin() as connection:
-        query = f'select * from customers c where c.S_2 >= "{start_date}" and c.S_2 <= "{end_date}"'
+        query = f'''
+            select c2.* from (
+            select c.customer_ID as customer_ID from customers c 
+            group by c.customer_ID 
+            having max(c.S_2) >= "{start_date}" and max(c.S_2) <= "{end_date}"   
+            ) c_id left join customers c2 on c2.customer_ID = c_id.customer_ID
+        '''
         data = pd.read_sql(query, connection)
         return data
 

@@ -13,6 +13,7 @@ def training_pipeline(
         feature_engineer_val,
         training_data_preparation,
         train_xgb_model,
+        prediction_service_loader,
         evaluate_model,
         model_deployer
 ):
@@ -29,6 +30,8 @@ def training_pipeline(
 
     model = train_xgb_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val)
 
-    accuracy, deployment_decision = evaluate_model(model, x_val, y_val, is_retraining)
+    service = prediction_service_loader()
+
+    deployment_decision = evaluate_model(model, service, x_val, y_val, is_retraining)
 
     model_deployer(deployment_decision, model)

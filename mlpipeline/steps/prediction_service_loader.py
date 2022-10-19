@@ -1,7 +1,5 @@
-from typing import cast
-
 from zenml.client import Client
-from zenml.integrations.mlflow.services import MLFlowDeploymentService
+from zenml.services import BaseService
 from zenml.steps import step, BaseParameters
 
 
@@ -26,7 +24,7 @@ class PredictionServiceLoaderStepConfig(BaseParameters):
 @step(enable_cache=False)
 def prediction_service_loader(
     config: PredictionServiceLoaderStepConfig,
-) -> MLFlowDeploymentService:
+) -> BaseService:
     """Get the prediction service started by the deployment pipeline"""
 
     client = Client()
@@ -41,7 +39,7 @@ def prediction_service_loader(
     print(model_deployer.find_model_server())
 
     if existing_services:
-        service = cast(MLFlowDeploymentService, existing_services[0])
+        service = existing_services[0]
 
     else:
         raise RuntimeError(
