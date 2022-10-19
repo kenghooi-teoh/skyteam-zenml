@@ -1,14 +1,14 @@
+from typing import cast
+
 import numpy as np
-
-import xgboost as xgb
 import pandas as pd
-
+import xgboost as xgb
 from zenml.integrations.mlflow.services import MLFlowDeploymentService
 from zenml.services import BaseService
 from zenml.steps import step, Output, BaseParameters
-from typing import cast
 
 from mlpipeline.steps.util import amex_metric_mod, raw_pred_to_class
+
 
 class EvaluatorStepConfig(BaseParameters):
     """Model deployment service loader configuration
