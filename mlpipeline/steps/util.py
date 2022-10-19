@@ -1,6 +1,7 @@
 from datetime import datetime
 import numpy as np
 from sqlalchemy import create_engine
+from typing import Union
 
 ENGINE = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
 
@@ -29,9 +30,13 @@ def amex_metric_mod(y_true, y_pred):
 
     return 0.5 * (gini[1] / gini[0] + top_four)
 
-
-def raw_pred_to_class(pred: float):
-    return int(pred >= 0.5)
+def raw_pred_to_class(pred: Union[np.array, list]):
+    """
+        list of raw pred to int class :
+        param pred: list or np.array :
+        return: list
+    """
+    return list(map(lambda x: int(x >= 0.5), pred))
 
 
 def save_prediction_in_db():
