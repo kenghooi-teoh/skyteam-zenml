@@ -3,9 +3,9 @@ import logging
 import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta
+from sqlalchemy import create_engine
 
 logging.basicConfig(level=logging.INFO, format=logging.BASIC_FORMAT)
-from sqlalchemy import create_engine
 
 logger = logging.getLogger("load_data")
 
@@ -15,6 +15,7 @@ engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=Fa
 def reduce_months(start_date, delta_period):
     end_date = start_date - relativedelta(months=delta_period)
     return end_date
+
 
 def create_dummy_customer_data(input_df):
     input_df['add_year'] = input_df['S_2'] + pd.offsets.DateOffset(years=5)
@@ -34,6 +35,7 @@ def create_dummy_customer_data(input_df):
     df_combined = df_combined.drop(['add_year'], axis=1)
 
     return df_combined
+
 
 def load_parquet_to_sql(parquet_data_path, table_name, connection, pre_processing=None):
     df = pd.read_parquet(parquet_data_path)
