@@ -55,7 +55,11 @@ def prediction_storer(
 
     with engine.begin() as connection:
         print("saving prediction and metadata")
-        load_df_to_sql(df, 'prediction', connection)
+        load_df_to_sql(df[["class", "cust_id", "run_id"]], 'batch_inference', connection, "append")
+        load_df_to_sql(df.loc[[0], ["run_id", "inference_date", "data_start_date", "data_end_date"]],
+                       'batch_inference_metadata',
+                       connection,
+                       "append")
 
     return df
 
