@@ -26,7 +26,7 @@ class EvaluatorStepConfig(BaseParameters):
 
 
 @step(enable_cache=False)
-def evaluator(model: xgb.core.Booster, service: BaseService, x_val: pd.DataFrame, y_val:pd.Series, is_retraining: bool) -> Output(deployment_decision=bool):
+def evaluator(model: xgb.core.Booster, service: BaseService, x_val: pd.DataFrame, y_val:pd.Series, is_retraining: bool) -> Output(accuracy=float, deployment_decision=bool):
     valid_dmatrix = xgb.DMatrix(data=x_val, label=y_val)
 
     oof_preds = model.predict(valid_dmatrix)
@@ -45,9 +45,9 @@ def evaluator(model: xgb.core.Booster, service: BaseService, x_val: pd.DataFrame
         print('accuracy:', accuracy)
         print('current_model:', accuracy_current_model)
 
-        return bool(accuracy >= accuracy_current_model)
+        return accuracy, bool(accuracy >= accuracy_current_model)
 
     else:
         print('common training')
         print('accuracy:', accuracy)
-        return bool(accuracy > 0.6)
+        return accuracy, bool(accuracy > 0.6)
