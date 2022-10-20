@@ -1,8 +1,9 @@
 from datetime import datetime
-import numpy as np
-from sqlalchemy import create_engine
 from typing import Union
+
+import numpy as np
 import pandas as pd
+from sqlalchemy import create_engine
 
 ENGINE = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
 

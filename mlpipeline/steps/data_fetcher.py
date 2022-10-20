@@ -1,8 +1,8 @@
 from datetime import datetime
+from pathlib import Path
+
 import pandas as pd
 from zenml.steps import Output, step, BaseParameters
-
-from pathlib import Path
 
 from mlpipeline.steps.util import to_date_string, ENGINE
 

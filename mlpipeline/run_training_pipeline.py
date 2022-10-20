@@ -1,16 +1,15 @@
+from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
+from zenml.integrations.mlflow.steps import mlflow_model_deployer_step
+
 from mlpipeline.steps.prediction_service_loader import PredictionServiceLoaderStepConfig, prediction_service_loader
-from steps.training_config import training_config, TrainingConfig
+from mlpipeline.steps.trainer import train_xgb_model
 from pipelines.training_pipeline import training_pipeline
 from steps.data_fetcher import fetch_train_data, fetch_val_data, fetch_label_data, FetchDataConfig
 from steps.data_preprocessor import training_data_preparation
-from mlpipeline.steps.trainer import train_xgb_model
 from steps.feature_engineer import feature_engineer_train, feature_engineer_val
 from steps.model_evaluator import evaluator
+from steps.training_config import training_config, TrainingConfig
 
-from zenml.integrations.mlflow.steps import mlflow_model_deployer_step
-
-
-from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
 
 def run_training_pipeline():
     print("running pipeline")

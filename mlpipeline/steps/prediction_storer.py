@@ -1,3 +1,5 @@
+from typing import cast
+
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
@@ -8,7 +10,7 @@ from zenml.steps import (
     StepEnvironment,
     BaseParameters
 )
-from typing import cast
+
 from mlpipeline.steps.util import run_id_to_datetime, load_df_to_sql
 
 engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/zenml', echo=False)
