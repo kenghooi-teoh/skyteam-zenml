@@ -16,7 +16,6 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
     Returns:
         model:
     """
-    # autologging does not work because of No module named 'matplotlib'
     mlflow.xgboost.autolog()
 
     xgb_params = {
@@ -36,7 +35,6 @@ def train_xgb_model(x_train: pd.DataFrame, y_train: pd.Series, x_val: pd.DataFra
     oof_preds = model.predict(valid_dmatrix)
     amex_metric_mod_scores = amex_metric_mod(y_val.values, oof_preds)
 
-    # log metrics
     mlflow.log_metrics({"amex_metric": amex_metric_mod_scores})
 
     return model

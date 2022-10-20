@@ -32,6 +32,6 @@ def training_pipeline(
 
     service = prediction_service_loader()
 
-    deployment_decision = evaluate_model(model, service, x_val, y_val, is_retraining)
+    _, deployment_decision = evaluate_model(model, service, x_val, y_val, is_retraining)
 
     model_deployer(deployment_decision, model)

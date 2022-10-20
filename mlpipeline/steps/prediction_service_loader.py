@@ -1,4 +1,3 @@
-from zenml.client import Client
 from zenml.services import BaseService
 from zenml.steps import step, BaseParameters
 
@@ -29,14 +28,10 @@ def prediction_service_loader(
 
     client = Client()
     model_deployer = client.active_stack.model_deployer
-    print("model_deployer in active stack: ", model_deployer)
     if not model_deployer:
         raise RuntimeError("No Model Deployer was found in the active stack.")
 
-    existing_services = model_deployer.find_model_server(
-    )
-    print("existing services: ", existing_services)
-    print(model_deployer.find_model_server())
+    existing_services = model_deployer.find_model_server()
 
     if existing_services:
         service = existing_services[0]
