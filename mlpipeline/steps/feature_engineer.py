@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from zenml.steps import Output, step
+from zenml.steps.utils import clone_step
 
 
 @step
@@ -20,8 +21,12 @@ def feature_engineer_inference_batch(df: pd.DataFrame) -> Output(val_feat=pd.Dat
 
 
 @step
-def feature_engineer_inference_ondemand(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+def feature_engineer_inference_single(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
     return feature_engineer(df)
+
+
+def feature_engineer_single(df: pd.DataFrame) -> Output(val_feat=pd.DataFrame):
+    ...    # TODO
 
 
 def feature_engineer(df: pd.DataFrame):

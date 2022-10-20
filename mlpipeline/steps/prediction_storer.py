@@ -22,7 +22,32 @@ class DataDateFilterConfig(BaseParameters):
 
 
 @step
-def prediction_storer(
+def single_prediction_storer(
+        predicted_cust_array: np.ndarray
+) -> Output():
+
+    step_env = cast(StepEnvironment, Environment()[STEP_ENVIRONMENT_NAME])
+    run_id = step_env.pipeline_run_id
+
+    inference_date = run_id_to_datetime(run_id.replace("single_inference_pipeline-", ""))
+
+    df = pd.DataFrame(list(predicted_cust_array))
+    df["run_id"] = run_id
+    df["inference_date"] = inference_date
+
+    with engine.begin() as connection:
+        print("saving single prediction and metadata")
+        load_df_to_sql(df[["class", "cust_id", "run_id"]], 'single_inference', connection, "append")
+        load_df_to_sql(df.loc[[0], ["run_id", "inference_date"]],
+                       'single_inference_metadata',
+                       connection,
+                       "append")
+
+    return df
+
+
+@step
+def batch_prediction_storer(
         data_date_filter_config: DataDateFilterConfig,
         predicted_cust_array: np.ndarray
 ) -> Output():
@@ -43,7 +68,7 @@ def prediction_storer(
     print(data_date_filter_config.start_date, " - ", data_date_filter_config.end_date)
     print(predicted_cust_array)
     print(run_id)
-    inference_date = run_id_to_datetime(run_id)
+    inference_date = run_id_to_datetime(run_id.replace("batch_inference_pipeline-", ""))
     print(inference_date)
 
     df = pd.DataFrame(list(predicted_cust_array))
@@ -64,7 +89,6 @@ def prediction_storer(
                        "append")
 
     return df
-
 
 
 

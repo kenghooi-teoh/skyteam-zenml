@@ -16,14 +16,15 @@ class FetchDataConfig(BaseParameters):
 
 class SingleCustomerQueryConfig(BaseParameters):
     customer_id: str
+    current_date: str
 
 
-# TODO:
-# 1. add customer query by customer id (for single inference)
-# 2. logics to fetch batch inference data
 @step
-def fetch_ondemand_inference_data(config: SingleCustomerQueryConfig) -> Output(data=pd.DataFrame):
-    return get_customer_data_by_id(ENGINE, config.customer_id)
+def fetch_single_inference_data(config: SingleCustomerQueryConfig) -> Output(data=pd.DataFrame):
+    cust_payments_by_month = get_customer_data_by_id(ENGINE, config.customer_id, config.current_date)
+    if len(cust_payments_by_month) < 6:
+        raise Exception("Insufficient historical data for this customer. Must have at least 6 months of data.")
+    return cust_payments_by_month
 
 
 @step
@@ -44,6 +45,7 @@ def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFr
 def print_dataframe_info(train_df: pd.DataFrame, val_df: pd.DataFrame) -> None:
     print(train_df.shape, val_df.shape)
 
+
 @step
 def fetch_train_data(config: FetchDataConfig) -> Output(train_feat_df=pd.DataFrame):
     if config.start_date is None or config.end_date is None:
@@ -56,6 +58,7 @@ def fetch_train_data(config: FetchDataConfig) -> Output(train_feat_df=pd.DataFra
         train_df = pd.concat([train_df_reduced, new_train_df], ignore_index=True)
     return train_df
 
+
 @step
 def fetch_val_data(config: FetchDataConfig) -> Output(val_feat_df=pd.DataFrame):
     if config.start_date is None or config.end_date is None:
@@ -63,6 +66,7 @@ def fetch_val_data(config: FetchDataConfig) -> Output(val_feat_df=pd.DataFrame):
     else:
         val_df = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
     return val_df
+
 
 @step
 def fetch_label_data() -> Output(label_df=pd.DataFrame):
@@ -115,9 +119,12 @@ def get_customers_data(engine):
         return data
 
 
-def get_customer_data_by_id(engine, id):
+def get_customer_data_by_id(engine, cust_id, current_date):
     with engine.begin() as connection:
-        data = pd.read_sql('select * from customers where id=id', con=connection)
+        data = pd.read_sql(
+            f"select * from customers c where c.customer_ID='{cust_id}' and c.S_2='{current_date}'",
+            con=connection
+        )
         return data
 
 

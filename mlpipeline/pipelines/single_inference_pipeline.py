@@ -2,7 +2,7 @@ from zenml.pipelines import pipeline
 
 
 @pipeline(enable_cache=False)
-def batch_inference_pipeline(
+def single_inference_pipeline(
         inference_data_fetcher,
         feature_engineer,
         prediction_service_loader,

@@ -52,5 +52,4 @@ def run_id_to_datetime(run_id):
     :param run_id:
     :return:
     """
-    run_id = run_id.replace("batch_inference_pipeline-", "")
     return datetime.strptime(run_id, '%d_%b_%y-%H_%M_%S_%f')
