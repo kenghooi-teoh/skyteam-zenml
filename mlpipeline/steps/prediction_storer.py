@@ -36,15 +36,10 @@ def prediction_storer(
         # [x] input start date, input end date
     """
     step_env = cast(StepEnvironment, Environment()[STEP_ENVIRONMENT_NAME])
-    # pipeline_name = step_env.pipeline_name
-    # step_name = step_env.step_name
+
     run_id = step_env.pipeline_run_id
 
-    print(data_date_filter_config.start_date, " - ", data_date_filter_config.end_date)
-    print(predicted_cust_array)
-    print(run_id)
     inference_date = run_id_to_datetime(run_id)
-    print(inference_date)
 
     df = pd.DataFrame(list(predicted_cust_array))
     df["run_id"] = run_id
@@ -52,11 +47,7 @@ def prediction_storer(
     df["data_start_date"] = data_date_filter_config.start_date
     df["data_end_date"] = data_date_filter_config.end_date
 
-    print(f"final output to write to DB: \n {df.shape}")
-    print(df.head())
-
     with engine.begin() as connection:
-        print("saving prediction and metadata")
         load_df_to_sql(df[["class", "cust_id", "run_id"]], 'batch_inference', connection, "append")
         load_df_to_sql(df.loc[[0], ["run_id", "inference_date", "data_start_date", "data_end_date"]],
                        'batch_inference_metadata',

@@ -41,13 +41,6 @@ def evaluator(model: xgb.core.Booster, service: BaseService, x_val: pd.DataFrame
 
         accuracy_current_model = amex_metric_mod(y_val.values, predicted_class)
 
-        print('retraining')
-        print('accuracy:', accuracy)
-        print('current_model:', accuracy_current_model)
-
         return accuracy, bool(accuracy >= accuracy_current_model)
-
     else:
-        print('common training')
-        print('accuracy:', accuracy)
         return accuracy, bool(accuracy > 0.6)
