@@ -122,7 +122,7 @@ def get_customers_data(engine):
 def get_customer_data_by_id(engine, cust_id, current_date):
     with engine.begin() as connection:
         data = pd.read_sql(
-            f"select * from customers c where c.customer_ID='{cust_id}' and c.S_2='{current_date}'",
+            f"select * from customers c where c.customer_ID='{cust_id}' and c.S_2<='{current_date}'",
             con=connection
         )
         return data

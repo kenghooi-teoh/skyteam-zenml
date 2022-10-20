@@ -10,6 +10,7 @@ def feature_engineer(df: pd.DataFrame) -> Output(train_feat=pd.DataFrame):
 
 feature_engineer_train = clone_step(feature_engineer, step_name="feature_engineer_train")
 feature_engineer_val = clone_step(feature_engineer, step_name="feature_engineer_val")
+feature_engineer_inference_single = clone_step(feature_engineer, step_name="feature_engineer_inference_single")
 
 
 def feature_engineer(df: pd.DataFrame):

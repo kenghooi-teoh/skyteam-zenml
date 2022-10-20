@@ -11,7 +11,8 @@ from steps.predictor import predictor
 def run_single_inference_pipeline():
     print("running single inference pipeline")
     fetch_inference_data_config = SingleCustomerQueryConfig(
-        customer_id="d96e388ddf6a063e3356fe06db0aa7a52c4a13e3cd34803f1dd25fc99b9003d5"
+        customer_id="b2ebc1269b5f7bd62b8ce4f9da74ea9b3eedbedf0aab4447e5a7a00bb127e0eb",
+        current_date="2022-12-30"
     )
 
     predictor_service_config = PredictionServiceLoaderStepConfig(
