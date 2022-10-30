@@ -1,3 +1,6 @@
 streamlit==1.13.0
 zenml>=0.20.0
 pymysql>=1.0.0
+plotly==5.11.0
+sklearn
+evidently

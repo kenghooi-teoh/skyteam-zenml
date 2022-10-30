@@ -30,7 +30,7 @@ def run_batch_inference_pipeline():
     )
 
     pipe = batch_inference_pipeline(
-        inference_data_fetcher=fetch_batch_inference_data(config=fetch_val_data_config),
+        inference_data_fetcher=fetch_batch_inference_data(config=fetch_inference_data_config),
         feature_engineer=feature_engineer(),
         prediction_service_loader=prediction_service_loader(config=predictor_service_config),
         predictor=predictor(),

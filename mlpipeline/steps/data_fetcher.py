@@ -103,7 +103,10 @@ def select_training_data_by_ratio(train_df, ratio=0.5):
 
 def get_training_data(engine):
     with engine.begin() as connection:
-        data = pd.read_sql('select * from train_data', con=connection)
+        dfs = pd.read_sql('select * from train_data', con=connection, chunksize=20000)
+        data = pd.DataFrame()
+        for df in dfs:
+            data = pd.concat((data, df))
         return data
 
 

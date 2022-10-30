@@ -44,7 +44,7 @@ def load_parquet_to_sql(parquet_data_path, table_name, connection, pre_processin
     if pre_processing:
         df = pre_processing(df)
 
-    df.to_sql(table_name, con=connection, if_exists='replace', index=False)
+    df.to_sql(table_name, con=connection, if_exists='replace', index=False, chunksize=20000)
 
 
 def load_csv_to_sql(csv_data_path, table_name, con, pre_processing=None):
