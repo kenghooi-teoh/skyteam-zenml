@@ -12,10 +12,6 @@ from steps.training_config import training_config, TrainingConfig
 
 
 def run_training_pipeline():
-    print("running pipeline")
-
-    print("MLflow tracking URI:", get_tracking_uri())
-
     config = TrainingConfig(is_retraining=False)
 
     predictor_service_config = PredictionServiceLoaderStepConfig(

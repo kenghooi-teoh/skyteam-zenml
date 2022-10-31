@@ -9,7 +9,6 @@ from steps.predictor import predictor
 
 
 def run_batch_inference_pipeline():
-    print("running batch inference pipeline")
     val_start_date = datetime(2022, 7, 1)
     val_end_date = datetime(2022, 7, 31)
 
