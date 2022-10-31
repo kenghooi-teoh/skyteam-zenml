@@ -4,4 +4,4 @@ pymysql>=1.0.0
 plotly==5.11.0
 sklearn
 evidently
-jinjia2
+Jinja2
