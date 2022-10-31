@@ -1,9 +1,9 @@
 import os, time
-import streamlit as st
+import app as st
 import pandas as pd
 from utils import add_logo
 
-import streamlit.components.v1 as components
+import app.components.v1 as components
 
 
 add_logo()

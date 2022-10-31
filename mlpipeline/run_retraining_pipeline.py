@@ -14,10 +14,6 @@ from steps.training_config import training_config, TrainingConfig
 
 
 def run_retraining_pipeline():
-    print("running pipeline")
-
-    print("MLflow tracking URI:", get_tracking_uri())
-
     config = TrainingConfig(is_retraining=True)
 
     train_start_date = datetime(2022, 6, 1)
