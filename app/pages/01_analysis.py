@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import plotly.express as px
-import streamlit as st
+import app as st
 from typing import Union
 from zenml.client import Client
 import numpy as np
