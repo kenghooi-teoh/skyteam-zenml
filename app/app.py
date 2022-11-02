@@ -1,9 +1,8 @@
-import os, time
-import app as st
-import pandas as pd
+import os
 from utils import add_logo
 
-import app.components.v1 as components
+import streamlit as st
+import streamlit.components.v1 as components
 
 
 add_logo()
@@ -14,5 +13,5 @@ st.title(f"Monitoring Dashboard")
 HtmlFile = open("dashboard.html", 'r', encoding='utf-8')
 source_code = HtmlFile.read() 
 print(source_code)
-components.html(source_code,height=3000,width=1080)
+components.html(source_code, height=3000, width=1080)
 
