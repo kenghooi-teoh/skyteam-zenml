@@ -1,6 +1,6 @@
 import pandas as pd
 from zenml.steps import Output, step
-from util import _feature_engineer
+from .util import _feature_engineer
 
 @step
 def feature_engineer(df: pd.DataFrame) -> Output(train_feat=pd.DataFrame):

@@ -149,9 +149,6 @@ def get_default_rate_by_month(df):
     return default_rate_df
 
 
-
-
-
 def raw_pred_to_class(pred: Union[np.array, list]):
     """
     list of raw pred to int class
