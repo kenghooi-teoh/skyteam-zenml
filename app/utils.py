@@ -1,4 +1,4 @@
-import app as st
+import streamlit as st
 
 
 def add_logo():

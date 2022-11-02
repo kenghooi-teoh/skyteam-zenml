@@ -1,14 +1,14 @@
 import logging
-import pandas as pd
-from sqlalchemy import create_engine
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
-import plotly.express as px
-import app as st
 from typing import Union
-from zenml.client import Client
-import numpy as np
 
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+from dateutil.relativedelta import relativedelta
+from sqlalchemy import create_engine
+from zenml.client import Client
 
 connection_string = 'mysql+pymysql://root:root@127.0.0.1:3306/zenml'
 engine = create_engine(connection_string)

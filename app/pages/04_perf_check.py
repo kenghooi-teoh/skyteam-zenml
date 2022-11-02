@@ -1,6 +1,4 @@
-import app as st
-import numpy as np
-import pandas as pd
+import streamlit as st
 from utils import add_logo
 
 add_logo()
