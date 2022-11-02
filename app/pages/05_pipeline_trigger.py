@@ -29,7 +29,7 @@ if submitted:
     )
 
     predictor_service_config = PredictionServiceLoaderStepConfig(
-        pipeline_name="training_pipeline",
+        pipeline_name="batch_inference_pipeline",
         step_name="model_deployer",
         model_name="xgboost"
     )
@@ -41,7 +41,7 @@ if submitted:
         predictor=predictor(),
         prediction_storer=batch_prediction_storer(data_date_filter_config=data_date_filter_config)
     )
-    pipe.run(unlisted=True)
+    pipe.run()
 
 
 
