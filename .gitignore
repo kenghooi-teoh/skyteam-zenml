@@ -1,5 +1,7 @@
 # large files
 *.html
+
+*dev.ipynb
 *.Identifier
 
 # Byte-compiled / optimized / DLL files
