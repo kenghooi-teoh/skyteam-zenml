@@ -54,8 +54,8 @@ def load_csv_to_sql(csv_data_path, table_name, con, pre_processing=None):
 
 
 with engine.begin() as connection:
-    logger.info("ingesting training data")
-    load_parquet_to_sql('./data/train_importance_fea.parquet', 'train_data', connection)
+    # logger.info("ingesting training data")
+    # load_parquet_to_sql('./data/train_importance_fea.parquet', 'train_data', connection)
 
     logger.info("ingesting validation data")
     load_parquet_to_sql('./data/valid_importance_fea.parquet', 'valid_data', connection)
