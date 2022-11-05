@@ -4,14 +4,20 @@ from datetime import (datetime, timedelta)
 
 def get_df(start_date:str, end_date:str, src_table:str,engine) -> pd.DataFrame: 
     query = f'''
-            select * from {src_table} 
-            where S_2 between "{start_date}" and "{end_date}"
+            select c2.* from 
+            (
+            select c.customer_ID as customer_ID from {src_table} c 
+            group by c.customer_ID 
+            having max(c.S_2) between "{start_date}" and "{end_date}"   
+            ) c_id 
+            left join {src_table} c2 
+            on c2.customer_ID = c_id.customer_ID
             '''
 
     with engine.begin() as connection:
-        print(query)
+        # print(query)
         data = pd.read_sql(query, con=connection)
-        print(data.shape)
+        # print(data.shape)
         return data
 
 

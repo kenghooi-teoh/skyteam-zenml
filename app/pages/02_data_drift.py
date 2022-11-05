@@ -20,17 +20,14 @@ st.title(f"Data Drift Monitoring Dashboard")
 
 dt_curr = st.date_input(
     "Please select CURRENT data month",
-    date(2017, 3, 1))
+    date(2022, 10, 1))
 st.write('CURRENT data month:', dt_curr)
 
 dt_ref = st.date_input(
     "Please select REFERENCE data month",
-    date(2018, 3, 1))
+    date(2021, 3, 1))
 st.write('REFERENCE data month:', dt_ref)
 
-
-src_table = "valid_data"
-# src_table = "va"
 
 start_date_curr =  str(dt_curr)
 end_date_curr = str(last_day(dt_curr))
@@ -41,8 +38,13 @@ end_date_ref = str(last_day(dt_ref))
 st.write('CURRENT data month end:', end_date_curr)
 st.write('REFERENCE data month end:', end_date_ref)
 
+
+src_table = "customers"
 df_curr = get_df(start_date_curr, end_date_curr, src_table, engine)
 df_ref = get_df(start_date_ref, end_date_ref, src_table, engine)
+
+assert df_curr.shape[0] > 0 
+assert df_ref.shape[0] > 0 
 
 my_data_drift_dashboard = Dashboard(tabs=[DataDriftTab(verbose_level=0)])
 my_data_drift_dashboard.calculate(df_curr.iloc[:,2:], df_ref.iloc[:,2:], column_mapping=None)
