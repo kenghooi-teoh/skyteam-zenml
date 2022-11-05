@@ -1,6 +1,8 @@
 # large files
 *.html
 *dev.ipynb
+*.Identifier
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -142,3 +144,5 @@ mlruns
 .idea
 
 .DS_Store
+
+notebook/test_sql.ipynb

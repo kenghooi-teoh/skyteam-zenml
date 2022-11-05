@@ -8,7 +8,14 @@ import plotly.express as px
 import streamlit as st
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import create_engine
-from zenml.client import Client
+
+from mlpipeline.pipelines.batch_inference_pipeline import batch_inference_pipeline
+from mlpipeline.steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
+from mlpipeline.steps.feature_engineer import feature_engineer
+
+from mlpipeline.steps.prediction_service_loader import PredictionServiceLoaderStepConfig, prediction_service_loader
+from mlpipeline.steps.prediction_storer import DataDateFilterConfig, batch_prediction_storer
+from mlpipeline.steps.predictor import predictor
 
 import sys
 sys.path.insert(0, '..')
@@ -18,24 +25,24 @@ add_logo()
 connection_string = 'mysql+pymysql://root:root@127.0.0.1:3306/zenml'
 engine = create_engine(connection_string)
 
-@st.experimental_memo
-def feature_engineer(df: pd.DataFrame):
-    all_cols = [c for c in list(df.columns) if c not in ['customer_ID', 'S_2']]
-    cat_features = ["B_30", "B_38", "D_114", "D_116", "D_117", "D_120", "D_126", "D_63", "D_64", "D_66", "D_68"]
-    num_features = [col for col in all_cols if col not in cat_features]
-    valid_cat_features = [fea for fea in cat_features if fea in all_cols]
-
-    test_num_agg = df.groupby("customer_ID")[num_features].agg(['mean', 'std', 'min', 'max', 'last'])
-    test_num_agg.columns = ['_'.join(x) for x in test_num_agg.columns]
-
-    test_cat_agg = pd.DataFrame()
-    if len(valid_cat_features) != 0:
-        test_cat_agg = df.groupby("customer_ID")[valid_cat_features].agg(['count', 'last', 'nunique'])
-        test_cat_agg.columns = ['_'.join(x) for x in test_cat_agg.columns]
-
-    df = pd.concat([test_num_agg, test_cat_agg], axis=1)
-    del test_num_agg, test_cat_agg
-    return df
+# @st.experimental_memo
+# def feature_engineer(df: pd.DataFrame):
+#     all_cols = [c for c in list(df.columns) if c not in ['customer_ID', 'S_2']]
+#     cat_features = ["B_30", "B_38", "D_114", "D_116", "D_117", "D_120", "D_126", "D_63", "D_64", "D_66", "D_68"]
+#     num_features = [col for col in all_cols if col not in cat_features]
+#     valid_cat_features = [fea for fea in cat_features if fea in all_cols]
+#
+#     test_num_agg = df.groupby("customer_ID")[num_features].agg(['mean', 'std', 'min', 'max', 'last'])
+#     test_num_agg.columns = ['_'.join(x) for x in test_num_agg.columns]
+#
+#     test_cat_agg = pd.DataFrame()
+#     if len(valid_cat_features) != 0:
+#         test_cat_agg = df.groupby("customer_ID")[valid_cat_features].agg(['count', 'last', 'nunique'])
+#         test_cat_agg.columns = ['_'.join(x) for x in test_cat_agg.columns]
+#
+#     df = pd.concat([test_num_agg, test_cat_agg], axis=1)
+#     del test_num_agg, test_cat_agg
+#     return df
 
 
 def to_date_string(dt: datetime):
@@ -162,46 +169,81 @@ def raw_pred_to_class(pred: Union[np.array, list]):
     """
     return list(map(lambda x: int(x >= 0.5), pred))
 
+def is_prediction_data_available(prediction_date_start, prediction_date_end):
+    prediction_date_start = to_date_string(prediction_date_start)
+    prediction_date_end = to_date_string(prediction_date_end)
+    sql=f"""
+    SELECT
+        bim.run_id,
+        bim.data_start_date,
+        bim.data_end_date
+    FROM
+        batch_inference_metadata bim
+    WHERE bim.data_start_date='{prediction_date_start}' AND bim.data_end_date='{prediction_date_end}';
+    """
+
+    df = pd.read_sql(sql, engine)
+    if not df.empty:
+        return True
+    else:
+        return False
+
+def get_prediction_df(prediction_date_start, prediction_date_end):
+    prediction_date_start = to_date_string(prediction_date_start)
+    prediction_date_end = to_date_string(prediction_date_end)
+    sql=f"""
+    SELECT bi.cust_id AS customer_ID, bim.data_start_date AS default_date, bi.class AS target FROM
+    (SELECT
+        bim.run_id,
+        bim.data_start_date,
+        bim.data_end_date
+    FROM
+        batch_inference_metadata bim
+    WHERE bim.data_start_date='{prediction_date_start}' AND bim.data_end_date='{prediction_date_end}') bim LEFT JOIN batch_inference bi ON bim.run_id = bi.run_id;
+    """
+
+    df = pd.read_sql(sql, engine)
+    df['default_date'] = pd.to_datetime(df['default_date'])
+    return df
 
 def predict_future(df, horizon_days=31):
     current_last_date = max(df['default_date'])
     prediction_start_date = current_last_date + relativedelta(months=1)
     prediction_start_date = prediction_start_date.replace(day=1)  # get the first date of next month
     prediction_end_date = prediction_start_date + relativedelta(day=horizon_days)  # get the last date of the next month
-    feature_start_date = prediction_start_date - relativedelta(months=2)
-    feature_end_date = prediction_end_date - relativedelta(months=2)
-    logging.info(f'current last date: {current_last_date}, predict data from {prediction_start_date} to {prediction_end_date}, get data from {feature_start_date} to {feature_end_date}')
-    features = get_customers_by_date_range(feature_start_date, feature_end_date)
-    data = feature_engineer(features)
-
-    client = Client()
-    model_deployer = client.active_stack.model_deployer
-    if not model_deployer:
-        raise RuntimeError("No Model Deployer was found in the active stack.")
-
-    existing_services = model_deployer.find_model_server()
-
-    if existing_services:
-        service = existing_services[0]
-
+    prediction_start_date = prediction_start_date.date()
+    prediction_end_date = prediction_end_date.date()
+    logging.info(f'current last date: {current_last_date}, predict data from {prediction_start_date} to {prediction_end_date}')
+    #query the data if prediction data is available else perform inference
+    if is_prediction_data_available(prediction_start_date, prediction_end_date):
+        logging.info("Data found from inference table, querying result")
     else:
-        raise RuntimeError(
-            f"No MLflow prediction service deployed"
+        fetch_inference_data_config = FetchDataConfig(
+            start_date=str(prediction_start_date),
+            end_date=str(prediction_end_date)
         )
 
-    request_input = np.array(data.to_dict(orient='records'))
+        data_date_filter_config = DataDateFilterConfig(
+            start_date=str(prediction_start_date),
+            end_date=str(prediction_end_date)
+        )
 
-    prediction = service.predict(request_input)
-    predicted_class_list = raw_pred_to_class(prediction)
+        predictor_service_config = PredictionServiceLoaderStepConfig(
+            pipeline_name="batch_inference_pipeline",
+            step_name="model_deployer",
+            model_name="xgboost"
+        )
 
-    cust_id_list = data.index.to_list()
-
-    predicted_cust_list = [{"target": cls, "customer_ID": cus} for cls, cus in zip(predicted_class_list, cust_id_list)]
-
-    predicted_cust_array = np.array(predicted_cust_list)
-    result_df = pd.DataFrame(list(predicted_cust_array))
-    result_df = pd.merge(result_df, features, on=["customer_ID"], how="left")[["S_2", "customer_ID", "target"]]
-    result_df = result_df.rename({'S_2': 'default_date'}, axis=1)
+        pipe = batch_inference_pipeline(
+            inference_data_fetcher=fetch_batch_inference_data(config=fetch_inference_data_config),
+            feature_engineer=feature_engineer(),
+            prediction_service_loader=prediction_service_loader(config=predictor_service_config),
+            predictor=predictor(),
+            prediction_storer=batch_prediction_storer(data_date_filter_config=data_date_filter_config)
+        )
+        pipe.run()
+        logging.info("Pipeline completed successfully!")
+    result_df = get_prediction_df(prediction_start_date, prediction_end_date)
     return result_df
 
 # Defining the Add Months function
@@ -212,7 +254,10 @@ def add_months(start_date, delta_months):
     end_date = start_date + relativedelta(months=delta_months)
     return end_date
 
-df = get_default_by_date(datetime(2021, 5, 1), datetime(2022, 10, 31))
+#
+date_today = datetime.now().date()
+date_one_year_ago = date_today - relativedelta(years=1)
+df = get_default_by_date(date_one_year_ago, date_today)
 trend = get_latest_default_rate_change(df)
 default_rate_this_month = get_latest_default_rate_by_month(df)
 default_rate_this_year = get_latest_default_rate_by_year(df)
@@ -231,8 +276,8 @@ historic_default_rate_by_m['type'] = 'historic'
 future_df = predict_future(df)
 future_df = future_df.groupby('customer_ID').max().reset_index()
 future_default_rate_by_m = get_default_rate_by_month(future_df)
-future_default_rate_by_m['year_month'] = future_default_rate_by_m.apply(
-    lambda row: add_months(row['year_month'], delta_months=2), axis=1)
+# future_default_rate_by_m['year_month'] = future_default_rate_by_m.apply(
+#     lambda row: add_months(row['year_month'], delta_months=2), axis=1)
 future_default_rate_by_m['type'] = 'prediction'
 plot_df = pd.concat([historic_default_rate_by_m, future_default_rate_by_m], axis=0)
 

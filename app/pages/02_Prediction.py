@@ -18,7 +18,7 @@ with st.form("dates"):
     data_end_date = st.date_input("Select end date: ")
 
     submitted = st.form_submit_button(
-        label="Run pipeline"
+        label="Run"
     )
 
 if submitted:
@@ -46,6 +46,8 @@ if submitted:
         prediction_storer=batch_prediction_storer(data_date_filter_config=data_date_filter_config)
     )
     pipe.run()
+
+    st.success("Pipeline completed successfully!")
 
 
 
