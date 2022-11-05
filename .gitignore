@@ -142,3 +142,5 @@ mlruns
 .idea
 
 .DS_Store
+
+notebook/test_sql.ipynb
