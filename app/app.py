@@ -1,9 +1,8 @@
-import os, time
-import streamlit as st
-import pandas as pd
+import os
 from utils import add_logo
 import mlflow
 
+import streamlit as st
 import streamlit.components.v1 as components
 from my_utils import (get_df, last_day)
 from datetime import (datetime, date)
@@ -38,10 +37,10 @@ st.write('REFERENCE data month:', dt_ref)
 
 src_table = "valid_data"
 
-start_date_curr =  str(dt_curr)
+start_date_curr = str(dt_curr)
 end_date_curr = str(last_day(dt_curr))
 
-start_date_ref =  str(dt_ref)
+start_date_ref = str(dt_ref)
 end_date_ref = str(last_day(dt_ref))
 
 st.write('CURRENT data month end:', end_date_curr)
@@ -59,5 +58,5 @@ HtmlFile = open("sky_report.html", 'r', encoding='utf-8')
 
 source_code = HtmlFile.read() 
 print(source_code)
-components.html(source_code,height=3000,width=1080)
+components.html(source_code, height=3000, width=1080)
 

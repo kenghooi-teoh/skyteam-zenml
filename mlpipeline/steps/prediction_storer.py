@@ -61,15 +61,8 @@ def batch_prediction_storer(
         # [x] input start date, input end date
     """
     step_env = cast(StepEnvironment, Environment()[STEP_ENVIRONMENT_NAME])
-    # pipeline_name = step_env.pipeline_name
-    # step_name = step_env.step_name
     run_id = step_env.pipeline_run_id
-
-    print(data_date_filter_config.start_date, " - ", data_date_filter_config.end_date)
-    print(predicted_cust_array)
-    print(run_id)
     inference_date = run_id_to_datetime(run_id.replace("batch_inference_pipeline-", ""))
-    print(inference_date)
 
     df = pd.DataFrame(list(predicted_cust_array))
     df["run_id"] = run_id
