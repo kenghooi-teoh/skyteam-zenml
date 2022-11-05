@@ -7,18 +7,21 @@ from mlpipeline.steps.prediction_service_loader import prediction_service_loader
 from mlpipeline.steps.prediction_storer import batch_prediction_storer, DataDateFilterConfig
 from mlpipeline.steps.predictor import predictor
 
+<<<<<<< HEAD:app/pages/05_pipeline_trigger.py
 import sys
 sys.path.insert(0, '..')
 from st_utils import add_logo
 add_logo()
 
+=======
+>>>>>>> 98226d80a9eaa48a0dccc635fb4b9a2466050a3d:app/pages/02_Prediction.py
 st.markdown('Run batch inference')
 with st.form("dates"):
     data_start_date = st.date_input("Select start date: ")
     data_end_date = st.date_input("Select end date: ")
 
     submitted = st.form_submit_button(
-        label="Run pipeline"
+        label="Run"
     )
 
 if submitted:
@@ -46,6 +49,8 @@ if submitted:
         prediction_storer=batch_prediction_storer(data_date_filter_config=data_date_filter_config)
     )
     pipe.run()
+
+    st.success("Pipeline completed successfully!")
 
 
 
