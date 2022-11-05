@@ -1,5 +1,5 @@
 import os
-from utils import add_logo
+from st_utils import add_logo
 
 import streamlit as st
 import streamlit.components.v1 as components
