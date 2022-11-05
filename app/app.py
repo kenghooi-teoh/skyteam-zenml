@@ -1,11 +1,11 @@
 import os
-from st_utils import add_logo
 
 import streamlit as st
 import streamlit.components.v1 as components
 
-
+from st_utils import add_logo
 add_logo()
+
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 st.title(f"Monitoring Dashboard")

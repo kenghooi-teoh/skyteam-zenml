@@ -1,4 +1,3 @@
-from st_utils import add_logo
 import os, time
 import pandas as pd
 import streamlit as st
@@ -11,6 +10,8 @@ from evidently.dashboard.tabs import DataDriftTab
 
 import sys
 sys.path.insert(0, '..')
+from mlpipeline.steps.util import _feature_engineer # preprocess data
+from st_utils import add_logo
 add_logo()
 
 
@@ -46,8 +47,12 @@ df_ref = get_df(start_date_ref, end_date_ref, src_table, engine)
 assert df_curr.shape[0] > 0 
 assert df_ref.shape[0] > 0 
 
+df_curr = _feature_engineer(df_curr)
+df_ref = _feature_engineer(df_ref)
+
+# drift calculation
 my_data_drift_dashboard = Dashboard(tabs=[DataDriftTab(verbose_level=0)])
-my_data_drift_dashboard.calculate(df_curr.iloc[:,2:], df_ref.iloc[:,2:], column_mapping=None)
+my_data_drift_dashboard.calculate(df_curr.iloc[:,1:], df_ref.iloc[:,1:], column_mapping=None)
 my_data_drift_dashboard.save('data_drift_report.html')
 
 HtmlFile = open("data_drift_report.html", 'r', encoding='utf-8')

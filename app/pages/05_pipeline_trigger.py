@@ -7,6 +7,10 @@ from mlpipeline.steps.prediction_service_loader import prediction_service_loader
 from mlpipeline.steps.prediction_storer import batch_prediction_storer, DataDateFilterConfig
 from mlpipeline.steps.predictor import predictor
 
+import sys
+sys.path.insert(0, '..')
+from st_utils import add_logo
+add_logo()
 
 st.markdown('Run batch inference')
 with st.form("dates"):
