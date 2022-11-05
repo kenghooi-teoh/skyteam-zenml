@@ -63,5 +63,5 @@ with engine.begin() as connection:
     logger.info('ingesting dummy customer data')
     load_parquet_to_sql('./data/other_importance_fea.parquet', 'customers', connection, create_dummy_customer_data)
 
-    # logger.info('ingesting dummy label data')
-    # load_csv_to_sql('./data/train_labels.csv', 'labels', connection)
+    logger.info('ingesting dummy label data')
+    load_csv_to_sql('./data/train_labels.csv', 'labels', connection)

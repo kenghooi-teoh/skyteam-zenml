@@ -1,14 +1,13 @@
+from datetime import date
+
 import streamlit as st
 import streamlit.components.v1 as components
-from drift_utils import (get_df, last_day)
-from datetime import date
-from sqlalchemy import create_engine
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
+from sqlalchemy import create_engine
 
-import sys
-sys.path.insert(0, '..')
-from mlpipeline.steps.util import _feature_engineer # preprocess data
+from drift_utils import (get_df, last_day)
+from mlpipeline.steps.util import feature_engineer_  # preprocess data
 from st_utils import add_logo
 
 add_logo()
@@ -46,8 +45,8 @@ df_ref = get_df(start_date_ref, end_date_ref, src_table, engine)
 assert df_curr.shape[0] > 0
 assert df_ref.shape[0] > 0
 
-df_curr = _feature_engineer(df_curr)
-df_ref = _feature_engineer(df_ref)
+df_curr = feature_engineer_(df_curr)
+df_ref = feature_engineer_(df_ref)
 
 # drift calculation
 my_data_drift_dashboard = Dashboard(tabs=[DataDriftTab(verbose_level=0)])

@@ -12,14 +12,11 @@ from sqlalchemy import create_engine
 from mlpipeline.pipelines.batch_inference_pipeline import batch_inference_pipeline
 from mlpipeline.steps.data_fetcher import fetch_batch_inference_data, FetchDataConfig
 from mlpipeline.steps.feature_engineer import feature_engineer
-
 from mlpipeline.steps.prediction_service_loader import PredictionServiceLoaderStepConfig, prediction_service_loader
 from mlpipeline.steps.prediction_storer import DataDateFilterConfig, batch_prediction_storer
 from mlpipeline.steps.predictor import predictor
-
-import sys
-sys.path.insert(0, '..')
 from st_utils import add_logo
+
 add_logo()
 
 connection_string = 'mysql+pymysql://root:root@127.0.0.1:3306/zenml'
@@ -48,6 +45,7 @@ engine = create_engine(connection_string)
 def to_date_string(dt: datetime):
     return dt.strftime("%Y-%m-%d")
 
+
 @st.experimental_memo
 def get_default():
     sql = f"""
@@ -64,6 +62,7 @@ def get_default():
 
     df = pd.read_sql(sql, engine)
     return df
+
 
 @st.experimental_memo
 def get_default_by_date(start_date: datetime, end_date: datetime):
@@ -84,6 +83,7 @@ def get_default_by_date(start_date: datetime, end_date: datetime):
     df = df.sort_values('default_date', ascending=True)
     return df
 
+
 def get_customers_by_date_range(start_date, end_date):
     if isinstance(start_date, datetime):
         start_date = to_date_string(start_date)
@@ -99,6 +99,7 @@ def get_customers_by_date_range(start_date, end_date):
         '''
         data = pd.read_sql(query, connection)
         return data
+
 
 @st.experimental_memo
 def get_latest_default_rate_change(df):
@@ -116,6 +117,7 @@ def get_latest_default_rate_change(df):
                          default_rate_df.iloc[-1]['prev_default_rate'] * 100
     return latest_rate_change
 
+
 @st.experimental_memo
 def get_latest_default_rate_by_month(df):
     """latest default rate"""
@@ -130,6 +132,7 @@ def get_latest_default_rate_by_month(df):
     latest_default_rate = default_rate_df.iloc[-1]['default_rate']
     return latest_default_rate
 
+
 @st.experimental_memo
 def get_latest_default_rate_by_year(df):
     """latest default rate"""
@@ -143,6 +146,7 @@ def get_latest_default_rate_by_year(df):
     default_rate_df = default_rate_df.rename({'customer_ID': 'default_rate'}, axis=1)
     latest_default_rate = default_rate_df.iloc[-1]['default_rate']
     return latest_default_rate
+
 
 @st.experimental_memo
 def get_default_rate_by_month(df):
@@ -169,10 +173,11 @@ def raw_pred_to_class(pred: Union[np.array, list]):
     """
     return list(map(lambda x: int(x >= 0.5), pred))
 
+
 def is_prediction_data_available(prediction_date_start, prediction_date_end):
     prediction_date_start = to_date_string(prediction_date_start)
     prediction_date_end = to_date_string(prediction_date_end)
-    sql=f"""
+    sql = f"""
     SELECT
         bim.run_id,
         bim.data_start_date,
@@ -188,10 +193,11 @@ def is_prediction_data_available(prediction_date_start, prediction_date_end):
     else:
         return False
 
+
 def get_prediction_df(prediction_date_start, prediction_date_end):
     prediction_date_start = to_date_string(prediction_date_start)
     prediction_date_end = to_date_string(prediction_date_end)
-    sql=f"""
+    sql = f"""
     SELECT bi.cust_id AS customer_ID, bim.data_start_date AS default_date, bi.class AS target FROM
     (SELECT
         bim.run_id,
@@ -206,6 +212,7 @@ def get_prediction_df(prediction_date_start, prediction_date_end):
     df['default_date'] = pd.to_datetime(df['default_date'])
     return df
 
+
 def predict_future(df, horizon_days=31):
     current_last_date = max(df['default_date'])
     prediction_start_date = current_last_date + relativedelta(months=1)
@@ -214,7 +221,7 @@ def predict_future(df, horizon_days=31):
     prediction_start_date = prediction_start_date.date()
     prediction_end_date = prediction_end_date.date()
     logging.info(f'current last date: {current_last_date}, predict data from {prediction_start_date} to {prediction_end_date}')
-    #query the data if prediction data is available else perform inference
+    # query the data if prediction data is available else perform inference
     if is_prediction_data_available(prediction_start_date, prediction_end_date):
         logging.info("Data found from inference table, querying result")
     else:
@@ -246,6 +253,7 @@ def predict_future(df, horizon_days=31):
     result_df = get_prediction_df(prediction_start_date, prediction_end_date)
     return result_df
 
+
 # Defining the Add Months function
 def add_months(start_date, delta_months):
     """
@@ -254,13 +262,13 @@ def add_months(start_date, delta_months):
     end_date = start_date + relativedelta(months=delta_months)
     return end_date
 
-#
+
 date_today = datetime.now().date()
 date_one_year_ago = date_today - relativedelta(years=1)
-df = get_default_by_date(date_one_year_ago, date_today)
-trend = get_latest_default_rate_change(df)
-default_rate_this_month = get_latest_default_rate_by_month(df)
-default_rate_this_year = get_latest_default_rate_by_year(df)
+dat = get_default_by_date(date_one_year_ago, date_today)
+trend = get_latest_default_rate_change(dat)
+default_rate_this_month = get_latest_default_rate_by_month(dat)
+default_rate_this_year = get_latest_default_rate_by_year(dat)
 
 # ----- Display -----
 col1, col2, col3 = st.columns(3)
@@ -271,9 +279,9 @@ with col2:
 with col3:
     st.metric("Default rate this year", round(default_rate_this_year, 2))
 
-historic_default_rate_by_m = get_default_rate_by_month(df)
+historic_default_rate_by_m = get_default_rate_by_month(dat)
 historic_default_rate_by_m['type'] = 'historic'
-future_df = predict_future(df)
+future_df = predict_future(dat)
 future_df = future_df.groupby('customer_ID').max().reset_index()
 future_default_rate_by_m = get_default_rate_by_month(future_df)
 # future_default_rate_by_m['year_month'] = future_default_rate_by_m.apply(

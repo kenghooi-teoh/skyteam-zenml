@@ -1,8 +1,8 @@
 import pandas as pd
-from datetime import datetime
 from datetime import (datetime, timedelta)
 
-def get_df(start_date:str, end_date:str, src_table:str,engine) -> pd.DataFrame: 
+
+def get_df(start_date: str, end_date: str, src_table: str, engine) -> pd.DataFrame:
     query = f'''
             select c2.* from 
             (
@@ -21,7 +21,7 @@ def get_df(start_date:str, end_date:str, src_table:str,engine) -> pd.DataFrame:
         return data
 
 
-def last_day(your_date: datetime)-> datetime:
+def last_day(your_date: datetime) -> datetime:
     # print("The original date is : " + str(your_date))
     nxt_mnth = your_date.replace(day=28) + timedelta(days=4)
     # subtracting the days from next month date to
