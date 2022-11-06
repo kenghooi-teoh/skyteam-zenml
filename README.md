@@ -26,21 +26,9 @@ bash stack-setup.sh
 
 ## Run app using `launch.sh`
 There bash script does the following:
-#### 1. Start a MySQL database container and populate it with data
-
-```bash
-docker run --rm -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=zenml -d mysql
-```
-```bash
-python data-ingestion/load_data.py
-```
-
-#### 2. Start the Streamlit app, which can be accessed at  http://localhost:8501
-In `app` folder, run
-```bash
-streamlit run Home.py
-```
-
+ 1. Start a MySQL database container
+ 2. Populate the database
+ 3. Start the Streamlit app, which can be accessed at  http://localhost:8501
 
 
 ## Project tree:
