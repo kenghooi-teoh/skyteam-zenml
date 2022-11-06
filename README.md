@@ -1,6 +1,8 @@
 # Predicting loan default
+For longer writeup, check [here](https://github.com/kenghooi-teoh/skyteam-zenml/edit/main/docs/blog.md)
 
-**Problem statement**: TODO
+**Problem statement**: 
+TODO
 
 ## Python Requirements
 
