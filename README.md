@@ -1,5 +1,5 @@
 # Predicting loan default
-For longer writeup, check [here](https://github.com/kenghooi-teoh/skyteam-zenml/edit/main/docs/blog.md)
+For longer writeup, check [here](https://kenghooi-teoh.github.io/skyteam-zenml/blog)
 
 **Problem statement**: 
 TODO
