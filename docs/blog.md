@@ -14,13 +14,13 @@ The submission also includes a GUI that allows users to:
 4. monitor for data drift
 ![image](https://user-images.githubusercontent.com/22209561/200164948-d2c973db-af2d-4f7d-b32d-da77c89b7107.png)
 
-### Why we chose this for your project to work on?
+### Why we chose this for our project to work on?
 Our goal of participation is to learn Zenml. We began by exploring some public datasets and found the (AMEX Default Prediction dataset)[https://www.kaggle.com/competitions/amex-default-prediction/data], which contains borrowers’ 13-month profile data as learning features and the occurrence of a default event as the learning target. We modeled a binary classifier based on this dataset.
 ![image](https://user-images.githubusercontent.com/22209561/200164356-d97a9f3d-a947-49cc-b142-829615bf4c37.png)
 
 We decided that this use case would be interesting to work on as we have not seen a lot of MLOps use cases shared publicly from an industry like banking, that requires very strict compliance and high transparency (during auditing) in the areas of dataset preparation, model development, model evaluation (and interpretation) and more.
 
-### How we used ZenML to build out our pipeline
+### How we used ZenML to build out our pipeline?
 The first pipeline we created is the model training pipeline. The pipeline contains the following steps:
 1. create training config
 2. fetch training data
