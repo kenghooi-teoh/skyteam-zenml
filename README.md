@@ -1,8 +1,9 @@
 # Predicting loan default
-For longer writeup, check [here](https://kenghooi-teoh.github.io/skyteam-zenml/blog)
+
 
 # Project summary
 Using Zenml to create model training and inference pipelines to perform loan default prediction.
+Check [here](https://kenghooi-teoh.github.io/skyteam-zenml/blog) for a longer writeup.
 
 ## Python Requirements
 
