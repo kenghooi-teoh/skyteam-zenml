@@ -1,8 +1,6 @@
 from zenml.pipelines import pipeline
 
 
-# TODO
-# - eventually write model to model registry with evaluation scores
 @pipeline(enable_cache=False)
 def training_pipeline(
         training_config,

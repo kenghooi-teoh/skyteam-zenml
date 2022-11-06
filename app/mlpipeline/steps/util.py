@@ -42,7 +42,7 @@ def raw_pred_to_class(pred: Union[np.array, list]):
     return list(map(lambda x: int(x >= 0.5), pred))
 
 
-def load_df_to_sql(data: pd.DataFrame, table_name, connection, if_exists):  # TODO
+def load_df_to_sql(data: pd.DataFrame, table_name, connection, if_exists):
     data.to_sql(table_name, con=connection, if_exists=if_exists, index=False)
 
 

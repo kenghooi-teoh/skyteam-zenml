@@ -31,7 +31,7 @@ def fetch_single_inference_data(config: SingleCustomerQueryConfig) -> Output(dat
 def fetch_batch_inference_data(config: FetchDataConfig) -> Output(data=pd.DataFrame):
     print("Getting batch inference data...")
     if config.start_date is None or config.end_date is None:
-        data = get_val_data(ENGINE)  # TODO: using get_val_data for now
+        data = get_val_data(ENGINE)
     else:
         data = get_customers_by_date_range(config.start_date, config.end_date, ENGINE)
     print("Inference data loaded: ", data.shape)
