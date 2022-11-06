@@ -50,4 +50,4 @@ All the Zenml pipeline code are kept in the app folder, and we followed the comm
 ![image](https://user-images.githubusercontent.com/22209561/200165599-9ac26f08-9152-4ce1-89d2-7eda08242415.png)
 
 ### Any demo or visual artifacts to showcase what we built
-Run the `launch.sh` script in our (projet)[https://github.com/kenghooi-teoh/skyteam-zenml] to use the GUI in your browser.
+Run the `launch.sh` script in our [project](https://github.com/kenghooi-teoh/skyteam-zenml) to use the GUI in your browser.
